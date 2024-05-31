@@ -1,0 +1,10 @@
+numpy
+pandas
+scikit_learn
+torch
+transformers
+pipreqs
+accelerate>=0.20.1
+tensorboardx
+pynvml
+paramiko
