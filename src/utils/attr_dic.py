@@ -9,8 +9,6 @@ class AttrDict(dict):
         self.__setattr__(key, value)
         
     def __setattr__(self, __name: str, __value) -> None:
-        if isinstance(__value, path):
-            __value = str(__value)
         self.__dict__[__name] = __value
         super().__setitem__(__name, __value)
         
@@ -21,14 +19,28 @@ class AttrDict(dict):
             self.create_time = create_time
     
     def __repr__(self):
-        return json.dumps(self, ensure_ascii=False, indent=4)
+        target_dic = {}
+        for k,v in self.items():
+            try:
+                json.dumps(v)
+                target_dic[k] = v
+                continue
+            except:
+                pass
+            try:
+                target_dic[k] = str(v)
+                continue
+            except:
+                pass
+            raise TypeError(f'wrong type\n{v}: {type(v)}')
+        return json.dumps(target_dic, ensure_ascii=False, indent=4)
 
     def _dump_json(self, json_path, overwrite=True):
         json_path = path(json_path)
         json_path.parent.mkdir(parents=True, exist_ok=True)
         if not json_path.exists() or overwrite:
             with open(json_path, 'w', encoding='utf8')as f:
-                json.dump(self, f, indent=4, ensure_ascii=False)
+                f.write(str(self)+'\n')
     
     @classmethod
     def load_json(cls, json_path):
