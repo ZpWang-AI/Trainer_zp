@@ -107,7 +107,7 @@ if __name__ == '__main__':
     ssh_transer = SSHTransmitor(hostname=cu12_host) # ==========
     
     # transmit code
-    from run import CODE_SPACE
+    CODE_SPACE = ''
     ssh_transer.exclude_file_func = exclude_func
     ssh_transer.exclude_folder_func = exclude_func
     ssh_transer.ssh_transmit(

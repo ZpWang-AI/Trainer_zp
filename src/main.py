@@ -51,7 +51,16 @@ class Main:
         'gpu_mem': 'gpu_mem.jsonl',
     }
     
-    def __init__(self) -> None:
+    def __init__(self, args:CustomArgs) -> None:
+        args.complete_path(
+            show_create_time=True,
+            specific_info=(
+                args.data_name, 
+                args.label_level,
+                args.task_name,
+            )
+        )
+        self.main_one_round(args)        
         pass
     
     def fit(
@@ -228,10 +237,8 @@ class Main:
                 shutil.rmtree(args.ckpt_dir)
             
     def main_one_round(self, args:CustomArgs):
-        # assert args.task_name in ['classification', 'generation', 'multitask']
-        
         from copy import deepcopy
-        
+
         args.check_path()
         args.justify_part()
         

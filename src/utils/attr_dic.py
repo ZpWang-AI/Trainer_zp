@@ -43,12 +43,17 @@ class AttrDict(dict):
                 f.write(str(self)+'\n')
     
     @classmethod
+    def from_dict(cls, dic:dict, **kwargs):
+        instance = cls()
+        for k, v in dic.items():
+            instance[k] = v
+        for k, v in kwargs.items():
+            instance[k] = v
+        return instance
+    
+    @classmethod
     def load_json(cls, json_path):
         json_path = path(json_path)
         with open(json_path, 'r', encoding='utf8')as f:
             dic = json.load(f)
-        res = cls()
-        for k in dic:
-            res[k] = dic[k]
-        return res
-        # return cls(**dic)
+        return cls.from_dict(dic)
