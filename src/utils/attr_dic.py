@@ -11,12 +11,6 @@ class AttrDict(dict):
     def __setattr__(self, __name: str, __value) -> None:
         self.__dict__[__name] = __value
         super().__setitem__(__name, __value)
-        
-    def set_create_time(self, create_time=None):
-        if not create_time:
-            self.create_time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-        else:
-            self.create_time = create_time
     
     def __repr__(self):
         target_dic = {}
@@ -32,10 +26,32 @@ class AttrDict(dict):
                 continue
             except:
                 pass
-            raise TypeError(f'wrong type\n{v}: {type(v)}')
+            raise TypeError(f'wrong type\n{k}: {v}\n{type(v)}')
         return json.dumps(target_dic, ensure_ascii=False, indent=4)
+        
+    def set_create_time(self, create_time=None):
+        if not create_time:
+            self.create_time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+        else:
+            self.create_time = create_time
+    
+    def merge_dict(self, dic:dict, force=False):
+        if force:
+            for k, v in dic.items():
+                self[k] = v
+        else:
+            for k, v in dic.items():
+                if k in self:
+                    self[k] = v        
+    
+    @classmethod
+    def from_dict(cls, dic:dict, force=True, **kwargs):
+        instance = cls()
+        instance.merge_dict(dic, force=force)
+        instance.merge_dict(kwargs, force=force)
+        return instance
 
-    def _dump_json(self, json_path, overwrite=True):
+    def dump_json(self, json_path, overwrite=True):
         json_path = path(json_path)
         json_path.parent.mkdir(parents=True, exist_ok=True)
         if not json_path.exists() or overwrite:
@@ -43,17 +59,8 @@ class AttrDict(dict):
                 f.write(str(self)+'\n')
     
     @classmethod
-    def from_dict(cls, dic:dict, **kwargs):
-        instance = cls()
-        for k, v in dic.items():
-            instance[k] = v
-        for k, v in kwargs.items():
-            instance[k] = v
-        return instance
-    
-    @classmethod
-    def load_json(cls, json_path):
+    def load_json(cls, json_path, force=True):
         json_path = path(json_path)
         with open(json_path, 'r', encoding='utf8')as f:
             dic = json.load(f)
-        return cls.from_dict(dic)
+        return cls.from_dict(dic, force=force)
