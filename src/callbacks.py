@@ -8,14 +8,13 @@ from typing import *
 from transformers import Trainer, TrainerCallback, TrainingArguments, TrainerState, TrainerControl
 
 from arguments import CustomArgs
-from utils import CustomLogger
+from utils import CustomLogger, dump_json
 from data import CustomData
 
 
 class CustomCallback(TrainerCallback):
     def __init__(
         self, 
-        logger:CustomLogger,
         metric_names:list,
         evaluate_testdata=False,
     ):
@@ -23,7 +22,6 @@ class CustomCallback(TrainerCallback):
         
         self.trainer:Trainer = None
         self.dataset:CustomData = None
-        self.logger = logger
         self.evaluate_testdata = evaluate_testdata
 
         self.metric_names = metric_names
@@ -40,7 +38,7 @@ class CustomCallback(TrainerCallback):
     def on_log(self, args: TrainingArguments, state: TrainerState, control: TrainerControl, **kwargs):
         logs = kwargs['logs']
         if 'loss' in logs and 'learning_rate' in logs:
-            self.logger.log_json(logs, self.train_loss_file_name, log_info=False, mode='a')
+            dump_json(logs, self.train_loss_file_name, mode='a')
 
     def on_evaluate(self, args, state, control, metrics:Dict[str, float], **kwargs):
         if self.evaluate_testdata:
@@ -62,12 +60,11 @@ class CustomCallback(TrainerCallback):
                 best_model_path.mkdir(parents=True, exist_ok=True)
                 best_model_path /= 'model.pth'
                 torch.save(self.trainer.model.state_dict(), best_model_path)
-                if self.logger:
-                    self.logger.info(f'{best_metric_name}: {metric_value}')
-                    # self.logger.info(f"New best model saved to {best_model_path}")
+                print(f'{best_metric_name}: {metric_value}')
 
-        self.logger.log_json(self.best_metrics, self.best_metric_file_name, log_info=False)
-        self.logger.log_json(dev_metrics, self.dev_metric_file_name, log_info=True, mode='a')
+        dump_json(self.best_metrics, self.best_metric_file_name, indent=4)
+        dump_json(dev_metrics, self.dev_metric_file_name, mode='a')
+        print(json.dumps(dev_metrics, indent=4))
 
             
     

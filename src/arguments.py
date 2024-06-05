@@ -5,17 +5,12 @@ from typing import *
 from pathlib import Path as path
 from datetime import datetime
 
-from utils import AttrDict
-from IDRR_data import DataFrames
+from utils import AttrDict, ExpArgs
 
 
-def fill_with_delimiter(s:str):
-    return f'{"="*10} {s} {"="*(30-len(s))}' if not s.startswith('='*10) else s
-
-
-class CustomArgs(AttrDict):
+class CustomArgs(ExpArgs):
     def __init__(self) -> None:
-        self.version = 'init'
+        self.desc = 'init'
         
         # ========== 'base setting' ================
         self.part1 = 'base setting'
@@ -24,15 +19,13 @@ class CustomArgs(AttrDict):
         self.seed = 2023
         self.cuda_cnt = 1
         self.training_iteration = 5
-        self.bf16 = False
-        self.fp16 = False
         
         # ========== 'file path' ===================
         self.part2 = 'file path'
         self.data_path = '/public/home/hongy/zpwang/IDRR_ConnT5/data/used/pdtb3.p1.csv'
         self.base_model_path = 'roberta-base'
-        self.log_dir = '/content/drive/MyDrive/IDRR/log_space'
-        self.ckpt_dir = ''
+        self.log_dir:path = '/content/drive/MyDrive/IDRR/log_space'
+        self.ckpt_dir:path = ''
 
         # ========== 'data' ========================
         self.part3 = 'data'
@@ -59,10 +52,12 @@ class CustomArgs(AttrDict):
         self.base_model = ''
         self.model_parameter_cnt = ''
 
-        # ========== 'optimizer' ===================
-        self.part5 = 'optimizer'
+        # ========== 'trainer' ===================
+        self.part5 = 'trainer'
         self.weight_decay = 0.01
         self.learning_rate = 3e-5
+        self.bf16 = False
+        self.fp16 = False
         
         # ========== 'epoch, batch, step' ==========
         self.part6 = 'epoch, batch, step'
@@ -85,19 +80,20 @@ class CustomArgs(AttrDict):
         self.server_name = ''
         self.create_time = ''
 
-        self.justify_part()
+        self.format_part()
+        self.set_create_time()
         
-    def justify_part(self):    
-        for p in range(1000):
-            attr_name = f'part{p}'
-            if hasattr(self, attr_name):
-                init_attr = self.__getattribute__(attr_name)
-                self.__setattr__(attr_name, fill_with_delimiter(init_attr))
-    
-    def fill_model_config(self, **kwargs):
-        for key in self.model_config:
-            if key in kwargs:
-                self.model_config[key] = kwargs[key]
+        self._version_info_list =[
+            self.create_time,
+            self.data_name,
+            self.label_level,
+            self.task_name,
+            self.desc,
+        ]
+        
+    @property
+    def version(self):
+        return '.'.join(self._version_info_list)
         
     # def estimate_cuda_memory(self):
     #     return 30000
@@ -118,33 +114,18 @@ class CustomArgs(AttrDict):
     #         self.cuda_id = free_gpu_ids
     #         print(f'=== CUDA {free_gpu_ids} ===')
     #     return self.cuda_id
+    
+    def fill_model_config(self, **kwargs):
+        if not isinstance(self.model_config, AttrDict):
+            self.model_config = AttrDict.from_dict(self.model_config)
+        self.model_config.merge_dict(kwargs, force=False)
 
-    def complete_path(self, show_create_time=True, specific_info:Union[list, tuple]=None):
-        if not self.create_time:
-            self.set_create_time()
-            
-            specific_fold_name = []
-            if show_create_time:
-                specific_fold_name.append(self.create_time)
-            if specific_info:
-                specific_fold_name.extend(specific_info)
-            specific_fold_name.append(self.version)
-            specific_fold_name = '.'.join(map(str, specific_fold_name))
-            
-            self.log_dir = os.path.join(self.log_dir, specific_fold_name) 
-            if not self.ckpt_dir:
-                self.ckpt_dir = self.log_dir
-            else:
-                self.ckpt_dir = os.path.join(self.ckpt_dir, specific_fold_name)
-            
     def check_path(self):
-        if not self.create_time:
-            print('===\nwarning: auto complete path\n===')
-            self.complete_path()
-        
         assert path(self.data_path).exists(), 'wrong data path'
         assert path(self.base_model_path).exists(), 'wrong model path'
         path(self.log_dir).mkdir(parents=True, exist_ok=True)
+        if not self.ckpt_dir:
+            self.ckpt_dir = self.log_dir
         path(self.ckpt_dir).mkdir(parents=True, exist_ok=True)
     
     def recalculate_eval_log_steps(self):
@@ -160,22 +141,4 @@ class CustomArgs(AttrDict):
         
 
 if __name__ == '__main__':
-    # sample_args = CustomArgs(test_setting=False)
-    # print(sample_args)
-    
-    def format_args_part():
-        with open(__file__, 'r', encoding='utf8')as f:
-            lines = f.readlines()
-        part_cnt = 1
-        prefix_space = ' '*8
-        for p, line in enumerate(lines):
-            if line.strip().startswith('self.part'):
-                part_name = line.split('=')[-1].strip()
-                lines[p-1] = f'{prefix_space}# {fill_with_delimiter(part_name)}\n'
-                lines[p] = f'{prefix_space}self.part{part_cnt} = {part_name}\n'
-                part_cnt += 1
-        
-        with open(__file__, 'w', encoding='utf8')as f:
-            f.writelines(lines)
-    
-    format_args_part()
+    CustomArgs.format_part_in_file(__file__)
