@@ -9,8 +9,8 @@ from collections import defaultdict
 from pathlib import Path as path
 from matplotlib import pyplot as plt
 
-from utils import (get_json_data_from_dir, CustomLogger, GPUMemoryMonitor,
-                   plot_curve, mark_extremum)
+from utils import (get_json_data_from_dir, GPUMemoryMonitor,
+                   plot_curve, mark_extremum, dump_json)
 # from main import Main
 
 
@@ -68,55 +68,37 @@ class Analyser:
                 plt.close()    
                 
     @classmethod
-    def analyze_results(cls, logger_or_log_dir:Union[CustomLogger, str], log_filename_dict:dict):
-        if isinstance(logger_or_log_dir, CustomLogger):
-            logger = logger_or_log_dir
-        else:
-            logger = CustomLogger(
-                log_dir=logger_or_log_dir,
-                logger_name='analyze_result_logger',
-                stream_handler=True,
-            )
+    def analyze_results(cls, log_dir:Union[path, str], log_filename_dict:dict):
+        log_dir = path(log_dir)
         for json_file_name in log_filename_dict.values():
             if json_file_name == log_filename_dict['hyperparams']:
                 continue
-            metric_analysis = cls.analyze_metrics(logger.log_dir, json_file_name, just_average=True)
+            metric_analysis = cls.analyze_metrics(log_dir, json_file_name, just_average=True)
             if metric_analysis:
-                logger.log_json(metric_analysis, json_file_name, log_info=True)
+                dump_json(metric_analysis, log_dir/json_file_name, indent=4)
+                print(json.dumps(metric_analysis, indent=4))
         
         cls.draw_target_curve(
-            log_dir=logger.log_dir,
+            log_dir=log_dir,
             file_name=log_filename_dict['loss'],
             x_key='epoch', y_key='loss', res_png='loss_curve.png'
         )
         for metric_name in 'Macro-F1 Meteor F1'.split():
             cls.draw_target_curve(
-                log_dir=logger.log_dir,
+                log_dir=log_dir,
                 file_name=log_filename_dict['dev'],
                 res_png=f'dev_{metric_name}_curve.png',
                 x_key='epoch', y_key='dev_'+metric_name, 
                 mark_max=True,
             )
-        # cls.draw_target_curve(
-        #     log_dir=logger.log_dir,
-        #     file_name=log_filename_dict['dev'],
-        #     x_key='epoch', y_key='dev_Macro-F1', res_png='dev_f1_curve.png',
-        #     mark_max=True,
-        # )
-        # cls.draw_target_curve(
-        #     log_dir=logger.log_dir,
-        #     file_name=log_filename_dict['dev'],
-        #     x_key='epoch', y_key='dev_Meteor', res_png='dev_meteor_curve.png',
-        #     mark_max=True,
-        # )
         
         mem_x, mem_ys = GPUMemoryMonitor.load_json_get_xy(
-            file_path=path(logger.log_dir)/log_filename_dict['gpu_mem']
+            file_path=log_dir/log_filename_dict['gpu_mem']
         )
         for mem_y in mem_ys:
             plt.plot(mem_x, mem_y)
             mark_extremum(mem_x, mem_y, mark_max=True)
-        plt.savefig(path(logger.log_dir)/'gpu_mem_curve.png')
+        plt.savefig(log_dir/'gpu_mem_curve.png')
         plt.close()
         
     @classmethod
@@ -195,7 +177,7 @@ if __name__ == '__main__':
     #     train_output_filename='train_output.json',
     # )
     Analyser.analyze_results(
-        logger_or_log_dir='/data/zpwang/IDRR_ConnT5/log_space_main/2024-05-19-18-04-28.pdtb3.level1.subtextdistil.test.ep25_bs32_lr3e-05_ft5small',
+        log_dir='/data/zpwang/IDRR_ConnT5/log_space_main/2024-05-19-18-04-28.pdtb3.level1.subtextdistil.test.ep25_bs32_lr3e-05_ft5small',
         log_filename_dict = {
             'hyperparams': 'hyperparams.json',
             'best': 'best_metric_score.json',

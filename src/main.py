@@ -16,7 +16,7 @@ from transformers import (TrainingArguments, Trainer, DataCollatorWithPadding, s
                           AutoModelForSeq2SeqLM)
 
 from utils import (catch_and_record_exception, AttrDict, dump_json,
-                   CustomLogger, count_parameters, GPUMemoryMonitor)
+                   count_parameters, GPUMemoryMonitor)
 from arguments import CustomArgs
 from IDRR_data import DataFrames2
 from data import CustomData, CustomDataset, get_data_by_name, CustomComputeMetrics
@@ -135,6 +135,8 @@ class Main:
         
         gpu_monitor.close()
         Analyser.analyze_results(args.log_dir, self.log_filename_dict)
+        
+        print('='*20+'\nDone')
         
     def main_one_iteration(
         self,

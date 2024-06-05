@@ -1,9 +1,31 @@
 import os
 import json
 import logging
+import datetime
 
 from pathlib import Path as path
 from collections import defaultdict
+    
+
+class StreamLogger:
+    def __init__(self, logger_name='') -> None:
+        if not logger_name:
+            logger_name = str(datetime.datetime.now())
+        self.logger = logging.getLogger(logger_name)
+        self.logger.setLevel(logging.DEBUG)
+        
+        formatter = logging.Formatter('%(message)s')
+        ch = logging.StreamHandler()
+        ch.setFormatter(formatter)
+        self.logger.addHandler(ch)
+    
+    def info(self, *args, sep=' ', end='\n'):
+        self.logger.info(sep.join(map(str, args))+end)
+
+
+# stream_logger = StreamLogger()
+# def log_print(*args, sep=' ', end='\n', file=None, flush=False):
+#     stream_logger.info(*args, sep=sep, end=end)
 
 
 class CustomLogger:

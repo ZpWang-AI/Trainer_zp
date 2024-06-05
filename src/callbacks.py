@@ -8,7 +8,7 @@ from typing import *
 from transformers import Trainer, TrainerCallback, TrainingArguments, TrainerState, TrainerControl
 
 from arguments import CustomArgs
-from utils import CustomLogger, dump_json
+from utils import dump_json
 from data import CustomData
 
 
