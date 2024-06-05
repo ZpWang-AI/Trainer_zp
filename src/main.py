@@ -178,7 +178,7 @@ class Main:
             train_output = json.load(f)
             train_output['total_runtime'] = total_runtime
         dump_json(train_output, args.log_dir/self.log_filename_dict['output'], indent=4)
-        
+
         if not args.save_ckpt:
             if args.ckpt_dir == args.log_dir:
                 for log_path in os.listdir(args.log_dir):
@@ -237,9 +237,9 @@ class Main:
         callback = CustomCallback(
             metric_names=compute_metrics.metric_names,
         )
-        callback.best_metric_file_name = self.log_filename_dict['best']
-        callback.dev_metric_file_name = self.log_filename_dict['dev']
-        callback.train_loss_file_name = self.log_filename_dict['loss']
+        callback.best_metric_file_name = args.log_dir/self.log_filename_dict['best']
+        callback.dev_metric_file_name = args.log_dir/self.log_filename_dict['dev']
+        callback.train_loss_file_name = args.log_dir/self.log_filename_dict['loss']
         
         trainer = Seq2SeqTrainer(
             model=model, 
