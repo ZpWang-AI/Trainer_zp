@@ -15,6 +15,8 @@ class AttrDict(dict):
     def __repr__(self):
         target_dic = {}
         for k,v in self.items():
+            if k.startswith('_'):
+                continue
             try:
                 json.dumps(v)
                 target_dic[k] = v

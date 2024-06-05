@@ -62,7 +62,7 @@ class GPUManager:
             time.sleep(wait_seconds)
     
     @staticmethod
-    def set_cuda_visible(target_mem_mb=10000, cuda_cnt=1, device_range=None):
+    def set_cuda_visible(target_mem_mb=10000, cuda_cnt=1, device_range:List[int]=None):
         free_cuda_ids = GPUManager.get_free_gpus(
             target_mem_mb=target_mem_mb,
             gpu_cnt=cuda_cnt,
