@@ -28,5 +28,6 @@ nohup.out
 src/scripts
 !src/model/_test_model.py
 !src/data/_test_data.py
+!src/data/test_data.py
 
 # data

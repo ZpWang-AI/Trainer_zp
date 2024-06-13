@@ -1,4 +1,4 @@
-from base_fit import *
+from base_setting import *
 
 
 def experiment_args():

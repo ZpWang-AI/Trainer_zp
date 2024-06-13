@@ -1,7 +1,7 @@
 # ===== prepare server_name, root_fold =====
 SERVER_NAME = 't2s'
 if SERVER_NAME in ['cu13_', 'northern_']:
-    ROOT_DIR = '/data/zpwang/IDRR_ConnT5/'
+    ROOT_DIR = '/data/zpwang/Trainer/'
     PRETRAINED_MODEL_DIR = '/data/zpwang/pretrained_models/'
 elif SERVER_NAME == 'cu12_':
     raise 

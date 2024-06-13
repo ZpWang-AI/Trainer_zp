@@ -118,7 +118,7 @@ class CustomArgs(ExpArgs):
     def fill_model_config(self, **kwargs):
         if not isinstance(self.model_config, AttrDict):
             self.model_config = AttrDict.from_dict(self.model_config)
-        self.model_config.merge_dict(kwargs, force=False)
+        self.model_config.merge_dict(kwargs, overwrite_existing=False)
 
     def check_path(self):
         assert path(self.data_path).exists(), 'wrong data path'
