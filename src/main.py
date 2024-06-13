@@ -15,7 +15,7 @@ from transformers import (TrainingArguments, Trainer, DataCollatorWithPadding, s
                           Seq2SeqTrainer, Seq2SeqTrainingArguments, GenerationConfig,
                           AutoModelForSeq2SeqLM)
 
-from utils import (catch_and_record_exception, AttrDict, dump_json,
+from utils_zp import (catch_and_record_exception, AttrDict, dump_json,
                    count_parameters, GPUMemoryMonitor)
 from arguments import CustomArgs
 from IDRR_data import DataFrames2

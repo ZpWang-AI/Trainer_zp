@@ -9,7 +9,7 @@ from collections import defaultdict
 from pathlib import Path as path
 from matplotlib import pyplot as plt
 
-from utils import (get_json_data_from_dir, GPUMemoryMonitor,
+from utils_zp import (get_json_data_from_dir, GPUMemoryMonitor,
                    plot_curve, mark_extremum, dump_json)
 # from main import Main
 
@@ -126,7 +126,7 @@ class Analyser:
         best_metric_filename,
         train_output_filename,
     ):
-        from utils import dict_to_defaultdict
+        from utils_zp import dict_to_defaultdict
         results = []
         for log_dir in os.listdir(root_log_fold):
             log_dir = path(root_log_fold, log_dir)

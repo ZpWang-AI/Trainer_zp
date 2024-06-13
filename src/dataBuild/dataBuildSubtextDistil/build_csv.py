@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 sys.path.insert(0, str(path(__file__).parent.parent))
 
-from utils import dump_json, load_json
+from utils_zp import dump_json, load_json
 from IDRR_data import DataFrames, DataFrames2, PromptFiller
 from data import CustomDataset
 from model import get_model_by_name, CustomModel

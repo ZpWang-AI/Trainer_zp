@@ -15,8 +15,8 @@ from transformers import (AutoConfig,
 
 from model.criterion import CELoss
 from model import CustomModel
-from utils.attr_dic import AttrDict
-from utils import format_element_to_shape
+from utils_zp.attr_dic import AttrDict
+from utils_zp import format_element_to_shape
 
 
 class MultitaskConfig(AttrDict):

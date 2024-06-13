@@ -13,7 +13,7 @@ from transformers import (AutoConfig,
 
 from model.criterion import CELoss
 from model import CustomModel
-from utils.attr_dic import AttrDict
+from utils_zp.attr_dic import AttrDict
 
 
 class BaselineClassificationConfig(AttrDict):

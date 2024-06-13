@@ -7,7 +7,7 @@ import time
 from transformers import AutoTokenizer
 
 from model import *
-from utils import count_parameters
+from utils_zp import count_parameters
 
 
 def test_model(sample_model):

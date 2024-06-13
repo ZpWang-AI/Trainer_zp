@@ -11,7 +11,7 @@ from transformers import (AutoConfig,
                           )
 
 from model.criterion import CELoss
-from utils.attr_dic import AttrDict
+from utils_zp.attr_dic import AttrDict
 
 
 class CustomModel(nn.Module):

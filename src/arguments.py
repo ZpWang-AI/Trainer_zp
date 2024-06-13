@@ -5,7 +5,7 @@ from typing import *
 from pathlib import Path as path
 from datetime import datetime
 
-from utils import AttrDict, ExpArgs
+from utils_zp import AttrDict, ExpArgs
 
 
 class CustomArgs(ExpArgs):
@@ -105,7 +105,7 @@ class CustomArgs(ExpArgs):
     #         if gpu_cnt is None:
     #             gpu_cnt = self.cuda_cnt
 
-    #         from utils import GPUManager
+    #         from utils_zp import GPUManager
     #         free_gpu_ids = GPUManager.get_free_gpus(
     #             gpu_cnt=gpu_cnt, 
     #             target_mem_mb=target_mem_mb,

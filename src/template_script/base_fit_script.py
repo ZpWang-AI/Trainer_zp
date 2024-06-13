@@ -26,7 +26,7 @@ sys.path.insert(0, ROOT_DIR)
 sys.path.insert(0, CODE_SPACE)
 
 # from arguments import CustomArgs
-from utils.gpu_utils import GPUManager
+from utils_zp.gpu_utils import GPUManager
 # === TODO: prepare gpu ===
 CUDA_CNT = 1  
 CUDA_ID = GPUManager.set_cuda_visible(target_mem_mb=24000, cuda_cnt=CUDA_CNT)
