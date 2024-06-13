@@ -7,7 +7,6 @@ import pandas as pd
 import numpy as np
 import time
 import transformers
-import setproctitle
 
 from typing import *
 from pathlib import Path as path
@@ -16,7 +15,7 @@ from transformers import (TrainingArguments, Trainer, DataCollatorWithPadding, s
                           AutoModelForSeq2SeqLM)
 
 from utils_zp import (catch_and_record_exception, AttrDict, dump_json,
-                   count_parameters, GPUMemoryMonitor)
+                      count_parameters, GPUMemoryMonitor, set_process_title)
 from arguments import CustomArgs
 from IDRR_data import DataFrames2
 from data import CustomData, CustomDataset, get_data_by_name, CustomComputeMetrics
@@ -53,7 +52,7 @@ class Main:
     }
 
     def __init__(self, args:CustomArgs) -> None:
-        setproctitle.setproctitle(f'zpwang_Trainer.{args.version}')
+        set_process_title('Trainer')
         self.main_one_round(args)
     
     def main_one_round(self, args:CustomArgs):
