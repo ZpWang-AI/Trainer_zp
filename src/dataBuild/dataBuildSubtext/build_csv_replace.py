@@ -1,19 +1,10 @@
-import os
-import sys
-import json
+from utils_zp.common_import import *
 import shutil
-import pandas as pd 
-import numpy as np
-import time
 import random
-
-from typing import *
-from pathlib import Path as path
-from tqdm import tqdm
 
 sys.path.insert(0, str(path(__file__).parent.parent))
 
-from utils_zp import dump_json, load_json
+from utils_zp import dump_json, load_json, make_path
 from IDRR_data import DataFrames, DataFrames2, PromptFiller
 from data import CustomDataset
 from model import get_model_by_name, CustomModel
@@ -30,6 +21,8 @@ class BuildCSV:
         data_relation,
         data_path,
         # hint_ratio,
+        prompt_default,
+        prompt_subtext,
         subtext_threshold,
         target_csv,
     ) -> None:
@@ -48,15 +41,16 @@ class BuildCSV:
             if subtext_threshold == 1:
                 for index, row in cur_df.iterrows():
                     if row.subtext_res == 1:
-                        x_input.append(f'{row.subtext}')
+                        cur_prompt = prompt_subtext
                     else:
-                        x_input.append(f'{row.arg1} <sep> {row.arg2}')
+                        cur_prompt = prompt_default
+                    x_input.append(PromptFiller.fill_prompt(row, cur_prompt))
             elif subtext_threshold == 2:
-                for index, row in cur_df.iterrows():
                     if row.subtext_res != 0:
-                        x_input.append(f'{row.subtext}')
+                        cur_prompt = prompt_subtext
                     else:
-                        x_input.append(f'{row.arg1} <sep> {row.arg2}')
+                        cur_prompt = prompt_default
+                    x_input.append(PromptFiller.fill_prompt(row, cur_prompt))
             else:
                 raise 'wrong subtext_threshold'
 
@@ -67,7 +61,7 @@ class BuildCSV:
 
         res_df = pd.concat(df_list, axis=0, ignore_index=True,)
         res_df = res_df.drop('index', axis=1)
-        path(target_csv).parent.mkdir(parents=True, exist_ok=True)
+        make_path(file_path=target_csv)
         res_df.to_csv(target_csv, index=False)
             
             
@@ -77,6 +71,8 @@ if __name__ == '__main__':
         # label_level='level1',
         data_relation='Implicit',
         data_path='/home/qwe/test/zpwang/Trainer/data/used/pdtb3_l1_implicit.subtext.csv',
-        subtext_threshold=2,
+        prompt_default='Argument 1:\n{arg1}\n\nArgument 2:\n{arg2}\n\nQuestion: What is the discourse relation between Argument 1 and Argument 2?\nA. Comparison\nB. Contingency\nC. Expansion\nD. Temporal\n\nAnswer:',
+        prompt_subtext='Implicit meaning:\n{subtext}\n\nQuestion: Based on the implicit meaning, what is the discourse relation between arguments?\nA. Comparison\nB. Contingency\nC. Expansion\nD. Temporal\n\nAnswer:',
+        subtext_threshold=1,
         target_csv='/home/qwe/test/zpwang/Trainer/data/dataBuild/subtext_replace/pdtb3_l1_implicit.subtext_replace.csv'
     )
