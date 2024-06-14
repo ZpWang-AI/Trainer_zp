@@ -22,7 +22,7 @@ class CustomArgs(ExpArgs):
         
         # ========== 'file path' ===================
         self.part2 = 'file path'
-        self.data_path = '/public/home/hongy/zpwang/IDRR_ConnT5/data/used/pdtb3.p1.csv'
+        self.data_path = '/public/home/hongy/zpwang/Trainer/data/used/pdtb3.p1.csv'
         self.base_model_path = 'roberta-base'
         self.log_dir:path = '/content/drive/MyDrive/IDRR/log_space'
         self.ckpt_dir:path = ''
@@ -32,12 +32,10 @@ class CustomArgs(ExpArgs):
         self.data_name = 'pdtb3'
         self.label_level = 'level1'
         self.data_relation = 'Implicit'
-        self.prompt = {'x': 'Arg1: {arg1}\nArg2: {arg2}', 'y': '{conn1sense1}'}
+        self.prompt = {'x': 'Arg1: {arg1}\nArg2: {arg2}', 'y': '{label11}'}
         self.max_input_length = 512
         self.secondary_label_weight = 0.5
         self.mini_dataset = False
-        self.data_augmentation_flatten_sec_label = False
-        self.data_augmentation_add_conn_to_arg2 = False
         self.subtext_threshold = 0
 
         self.trainset_size = -1

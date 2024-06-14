@@ -52,7 +52,7 @@ class Main:
     }
 
     def __init__(self, args:CustomArgs) -> None:
-        set_process_title('Trainer')
+        # set_process_title('Trainer')
         self.main_one_round(args)
     
     def main_one_round(self, args:CustomArgs):
@@ -78,8 +78,6 @@ class Main:
             max_length=args.max_input_length,
             secondary_label_weight=args.secondary_label_weight,
             mini_dataset=args.mini_dataset,
-            data_augmentation_flatten_sec_label=args.data_augmentation_flatten_sec_label,
-            data_augmentation_add_conn_to_arg2=args.data_augmentation_add_conn_to_arg2,
             subtext_threshold=args.subtext_threshold,
         )
         data: CustomData

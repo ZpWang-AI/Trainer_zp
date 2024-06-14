@@ -7,7 +7,7 @@ elif SERVER_NAME == 'cu12_':
     raise 
     ROOT_DIR = '/home/zpwang/IDRR/'
 elif SERVER_NAME == 'SGA100':
-    ROOT_DIR = '/public/home/hongy/zpwang/IDRR_ConnT5/'
+    ROOT_DIR = '/public/home/hongy/zpwang/Trainer/'
     PRETRAINED_MODEL_DIR = '/public/home/hongy/pretrained_models/'
 elif SERVER_NAME == 't2s':
     ROOT_DIR = '/home/qwe/test/zpwang/Trainer'
@@ -15,8 +15,7 @@ elif SERVER_NAME == 't2s':
 else:
     raise Exception('wrong ROOT_DIR')
 
-import os, sys
-from pathlib import Path as path
+from utils_zp.common_import import *
 
 BRANCH = 'main'
 CODE_SPACE = ROOT_DIR+'src/'
@@ -30,12 +29,14 @@ from utils_zp.gpu_utils import GPUManager
 # === TODO: prepare gpu ===
 CUDA_CNT = 1  
 CUDA_ID = GPUManager.set_cuda_visible(target_mem_mb=24000, cuda_cnt=CUDA_CNT)
-# CUDA_ID = CustomArgs().prepare_gpu(target_mem_mb=10500, gpu_cnt=CUDA_CNT) 
 
 # ===== import ===== 
 from arguments import CustomArgs
 from model import BaselineClassificationConfig
 from main import Main
+
+# from utils_zp import set_process_title, get_cur_time
+# set_process_title(title=f'trainer_{get_cur_time()}')
 
 
 def base_experiment_args():
@@ -61,11 +62,9 @@ def base_experiment_args():
     args.data_name = 'pdtb3'
     args.label_level = 'level1'
     args.data_relation = 'Implicit'
-    args.prompt = {'x': 'Arg1: {arg1}\nArg2: {arg2}', 'y': '{conn1sense1}'}
+    args.prompt = {'x': 'Arg1: {arg1}\nArg2: {arg2}', 'y': '{label11}'}
     args.secondary_label_weight = 0.5
     args.mini_dataset = False
-    args.data_augmentation_flatten_sec_label = False
-    args.data_augmentation_add_conn_to_arg2 = False
     args.subtext_threshold = 0
 
     # args.trainset_size = -1

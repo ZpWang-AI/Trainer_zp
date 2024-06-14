@@ -177,7 +177,7 @@ if __name__ == '__main__':
     #     train_output_filename='train_output.json',
     # )
     Analyser.analyze_results(
-        log_dir='/data/zpwang/IDRR_ConnT5/log_space_main/2024-05-19-18-04-28.pdtb3.level1.subtextdistil.test.ep25_bs32_lr3e-05_ft5small',
+        log_dir='/data/zpwang/Trainer/log_space_main/2024-05-19-18-04-28.pdtb3.level1.subtextdistil.test.ep25_bs32_lr3e-05_ft5small',
         log_filename_dict = {
             'hyperparams': 'hyperparams.json',
             'best': 'best_metric_score.json',

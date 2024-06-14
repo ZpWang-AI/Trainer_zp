@@ -45,7 +45,7 @@ class BuildCSV:
             dfs.label_level = label_level
             cur_df = dfs.get_dataframe(split=split)
             hints = []
-            for sense in cur_df['conn1sense1']:
+            for sense in cur_df['label11']:
                 if random.random() < hint_ratio:
                     hints.append(f'Answer: {sense}')
                 else:
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         data_name='pdtb3',
         label_level='level1',
         data_relation='Implicit',
-        data_path='/data/zpwang/IDRR_ConnT5/data/used/pdtb3.p1.csv',
+        data_path='/data/zpwang/Trainer/data/used/pdtb3.p1.csv',
         hint_ratio=0.1,
-        target_csv='/data/zpwang/IDRR_ConnT5/data/dataBuild/with_hint/pdtb3_l1_implicit.hint10.csv'
+        target_csv='/data/zpwang/Trainer/data/dataBuild/with_hint/pdtb3_l1_implicit.hint10.csv'
     )

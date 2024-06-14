@@ -1,4 +1,5 @@
 from script_head import *
+from utils_zp import get_info_from_script_file
 
 
 def experiment_args():
@@ -29,9 +30,8 @@ def experiment_args():
     from model import BaselineClassificationConfig
     args.model_config = BaselineClassificationConfig()
     
-    script_name = path(__file__).stem.split('_')
-    args.desc = '_'.join(script_name[2:])
-    script_id = path(__file__).name[:3]
+    script_info = get_info_from_script_file(__file__)
+    args.desc, script_id = script_info['desc'], script_info['id']
     args._version_info_list = [
         args.create_time,
         args.data_name,

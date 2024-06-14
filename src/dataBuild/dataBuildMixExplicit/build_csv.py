@@ -73,8 +73,8 @@ class BuildCSV:
 if __name__ == '__main__':
     BuildCSV(
         data_name='pdtb3',
-        data_path='/data/zpwang/IDRR_ConnT5/data/used/pdtb3.p1.csv',
+        data_path='/data/zpwang/Trainer/data/used/pdtb3.p1.csv',
         explicit_ratio_train=0.2,
         explicit_ratio_eval=0,
-        target_csv='/data/zpwang/IDRR_ConnT5/data/dataBuild/mix_explicit/pdtb3_l1.mix_explicit20.csv'
+        target_csv='/data/zpwang/Trainer/data/dataBuild/mix_explicit/pdtb3_l1.mix_explicit20.csv'
     )

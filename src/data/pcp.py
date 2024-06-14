@@ -89,11 +89,11 @@ class PCPData(CustomData):
     ):
         num_ans_word = len(self.dataframes.get_ans_word_list())
         eye = np.eye(num_ans_word+1, num_ans_word)
-        primary_label_ids = df['conn1id'].astype(int)
+        primary_label_ids = df['ans_word1'].astype(int)
         label_vector = eye[primary_label_ids]
         if secondary_label_weight:
             eye *= secondary_label_weight
-            sec_label_ids = df['conn2id'].copy()
+            sec_label_ids = df['ans_word2'].copy()
             sec_label_ids[pd.isna(sec_label_ids)] = num_ans_word
             sec_label_ids = sec_label_ids.astype(int)
             label_vector += eye[sec_label_ids]

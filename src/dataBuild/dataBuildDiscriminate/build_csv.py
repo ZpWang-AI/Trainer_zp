@@ -46,7 +46,7 @@ class BuildCSV:
             
 if __name__ == '__main__':
     BuildCSV([
-        '/data/zpwang/IDRR_ConnT5/data/subtext_discriminate/pdtb3_train_subtext_discriminate',
-        '/data/zpwang/IDRR_ConnT5/data/subtext_discriminate/pdtb3_dev_subtext_discriminate',
-        '/data/zpwang/IDRR_ConnT5/data/subtext_discriminate/pdtb3_test_subtext_discriminate',
-    ], target_csv='/data/zpwang/IDRR_ConnT5/data/subtext_discriminate/pdtb3_l1_implicit.subtext_distil_discriminate.csv')
+        '/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_train_subtext_discriminate',
+        '/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_dev_subtext_discriminate',
+        '/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_test_subtext_discriminate',
+    ], target_csv='/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_l1_implicit.subtext_distil_discriminate.csv')

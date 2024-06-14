@@ -113,14 +113,14 @@ if __name__ == '__main__':
     for split in 'train dev test'.split():
     # for split in 'dev'.split():
         DiscriminateMain(
-            hyperparams_path='/data/zpwang/IDRR_ConnT5/log_space_main/2024-05-24-17-35-57.pdtb3.level1.subtextdiscriminate.base.ep25_bs32_lr3e-05_robertabase/hyperparams.json',
-            model_ckpt_path='/data/zpwang/IDRR_ConnT5/log_space_main/2024-05-24-17-35-57.pdtb3.level1.subtextdiscriminate.base.ep25_bs32_lr3e-05_robertabase/train_iter_0/checkpoint_best_F1/model.pth',
+            hyperparams_path='/data/zpwang/Trainer/log_space_main/2024-05-24-17-35-57.pdtb3.level1.subtextdiscriminate.base.ep25_bs32_lr3e-05_robertabase/hyperparams.json',
+            model_ckpt_path='/data/zpwang/Trainer/log_space_main/2024-05-24-17-35-57.pdtb3.level1.subtextdiscriminate.base.ep25_bs32_lr3e-05_robertabase/train_iter_0/checkpoint_best_F1/model.pth',
             data_name='pdtb3',
             data_level='level1',
             data_relation='Implicit',
-            data_path='/data/zpwang/IDRR_ConnT5/data/used/pdtb3_l1_implicit.subtext_distil.csv',
+            data_path='/data/zpwang/Trainer/data/used/pdtb3_l1_implicit.subtext_distil.csv',
             data_split=split,
             batch_size=32,
             x_prompt='',
-            output_dir=f'/data/zpwang/IDRR_ConnT5/data/subtext_discriminate/pdtb3_{split}_subtext_distil',
+            output_dir=f'/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_{split}_subtext_distil',
         )

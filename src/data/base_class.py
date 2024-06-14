@@ -153,9 +153,9 @@ class CustomDataset(Dataset):
 class CustomData:
     test_x_ignore=(
         # 'reason', 
-        'conn1', 'conn2', 'conn1id', 'conn2id', 
-        'conn1sense1', 'conn1sense2', 'conn2sense1', 'conn2sense2',
-        'conn1sense1id', 'conn1sense2id', 'conn2sense1id', 'conn2sense2id',
+        # 'conn1', 'conn2', 'conn1id', 'conn2id', 
+        # 'conn1sense1', 'conn1sense2', 'conn2sense1', 'conn2sense2',
+        # 'conn1sense1id', 'conn1sense2id', 'conn2sense1id', 'conn2sense2id',
     )
     train_input_y_nums:bool
     train_input_y_strs:bool
@@ -173,8 +173,6 @@ class CustomData:
         max_length=1024,
         secondary_label_weight=0.5,
         mini_dataset=False,
-        data_augmentation_flatten_sec_label=False,
-        data_augmentation_add_conn_to_arg2=False,
         subtext_threshold=0,
     ):
         self.dataframes = DataFrames2(
@@ -202,8 +200,6 @@ class CustomData:
         self.max_length = max_length
         self.secondary_label_weight = secondary_label_weight
         self.mini_dataset = mini_dataset
-        self.data_augmentation_flatten_sec_label = data_augmentation_flatten_sec_label
-        self.data_augmentation_add_conn_to_arg2 = data_augmentation_add_conn_to_arg2
         self.subtext_threshold = subtext_threshold
 
         self.label_list = self.dataframes.get_label_list()
@@ -230,11 +226,11 @@ class CustomData:
         secondary_label_weight=0.,
     ):
         eye = np.eye(self.num_labels+1, self.num_labels)
-        primary_label_ids = df['conn1sense1id'].astype(int)
+        primary_label_ids = df['label11'].astype(int)
         label_vector = eye[primary_label_ids]
         if secondary_label_weight:
             eye *= secondary_label_weight
-            for sec_label_ids in [df['conn1sense2id'], df['conn2sense1id'], df['conn2sense2id']]:
+            for sec_label_ids in [df['label12'], df['label21'], df['label22']]:
                 sec_label_ids = sec_label_ids.copy()
                 sec_label_ids[pd.isna(sec_label_ids)] = self.num_labels
                 sec_label_ids = sec_label_ids.astype(int)
@@ -261,38 +257,38 @@ class CustomData:
             if self.mini_dataset:
                 df = df.iloc[:8]
             
-            # flatten all sense
-            if self.data_augmentation_flatten_sec_label:
-                df2 = df.copy()
-                df2.dropna(subset=['conn1sense2'], inplace=True)
-                df2['conn1sense1'] = df2['conn1sense2']
-                df3 = df.copy()
-                df3.dropna(subset=['conn2sense1'], inplace=True)
-                df3['conn1sense1'], df3['conn1'] = df3['conn2sense1'], df3['conn2']
-                df4 = df.copy()
-                df4.dropna(subset=['conn2sense2'], inplace=True)
-                df4['conn1sense1'], df4['conn1'] = df4['conn2sense2'], df4['conn2']
-                df = pd.concat([df,df2,df3,df4], ignore_index=True)
-                for pdna in 'conn2 conn1sense2 conn2sense1 conn2sense2'.split():
-                    df[pdna] = pd.NA
+            # # flatten all sense
+            # if self.data_augmentation_flatten_sec_label:
+            #     df2 = df.copy()
+            #     df2.dropna(subset=['conn1sense2'], inplace=True)
+            #     df2['conn1sense1'] = df2['conn1sense2']
+            #     df3 = df.copy()
+            #     df3.dropna(subset=['conn2sense1'], inplace=True)
+            #     df3['conn1sense1'], df3['conn1'] = df3['conn2sense1'], df3['conn2']
+            #     df4 = df.copy()
+            #     df4.dropna(subset=['conn2sense2'], inplace=True)
+            #     df4['conn1sense1'], df4['conn1'] = df4['conn2sense2'], df4['conn2']
+            #     df = pd.concat([df,df2,df3,df4], ignore_index=True)
+            #     for pdna in 'conn2 conn1sense2 conn2sense1 conn2sense2'.split():
+            #         df[pdna] = pd.NA
             
-            # concat connective with arg2, flatten and clear, return [init, conn1+arg2, conn2+arg2]
-            if self.data_augmentation_add_conn_to_arg2:
-                df2 = df.copy()
-                df2['arg2'] = df2['conn1']+df2['arg2']
-                df3 = df.copy()
-                df3.dropna(subset=['conn2'], inplace=True)
-                df3['arg2'] = df3['conn2']+df3['arg2']
-                df3['conn1'] = df3['conn2']
-                df3['conn1sense1'] = df3['conn2sense1']
-                df3['conn1sense2'] = df3['conn2sense2']
-                df = pd.concat([df, df2, df3], ignore_index=True)
-                for pdna in 'conn2 conn2sense1 conn2sense2'.split():
-                    df[pdna] = pd.NA
+            # # concat connective with arg2, flatten and clear, return [init, conn1+arg2, conn2+arg2]
+            # if self.data_augmentation_add_conn_to_arg2:
+            #     df2 = df.copy()
+            #     df2['arg2'] = df2['conn1']+df2['arg2']
+            #     df3 = df.copy()
+            #     df3.dropna(subset=['conn2'], inplace=True)
+            #     df3['arg2'] = df3['conn2']+df3['arg2']
+            #     df3['conn1'] = df3['conn2']
+            #     df3['conn1sense1'] = df3['conn2sense1']
+            #     df3['conn1sense2'] = df3['conn2sense2']
+            #     df = pd.concat([df, df2, df3], ignore_index=True)
+            #     for pdna in 'conn2 conn2sense1 conn2sense2'.split():
+            #         df[pdna] = pd.NA
             
-            if (self.data_augmentation_flatten_sec_label or 
-                self.data_augmentation_add_conn_to_arg2):
-                df = self.dataframes.process_df_sense(df)
+            # if (self.data_augmentation_flatten_sec_label or 
+            #     self.data_augmentation_add_conn_to_arg2):
+            #     df = self.dataframes.process_df_sense(df)
                 
             return df
     
