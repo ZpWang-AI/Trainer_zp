@@ -14,7 +14,7 @@ from tqdm import tqdm
 sys.path.insert(0, str(path(__file__).parent.parent))
 
 from utils_zp import dump_json, load_json
-from IDRR_data import DataFrames, DataFrames2, PromptFiller
+from IDRR_data import IDRRDataFrames, PromptFiller
 from data import CustomDataset
 from model import get_model_by_name, CustomModel
 
@@ -26,23 +26,23 @@ class BuildCSV:
     def __init__(
         self,
         data_name,
-        label_level,
+        data_level,
         data_relation,
         data_path,
         hint_ratio,
         target_csv,
     ) -> None:
-        dfs = DataFrames2(
+        dfs = IDRRDataFrames(
             data_name=data_name,
-            label_level=label_level,
-            relation=data_relation,
+            data_level=data_level,
+            data_relation=data_relation,
             data_path=data_path,
         )
         
         df_list = []
         
         for split in 'train dev test'.split():
-            dfs.label_level = label_level
+            dfs.data_level = data_level
             cur_df = dfs.get_dataframe(split=split)
             hints = []
             for sense in cur_df['label11']:
@@ -50,7 +50,7 @@ class BuildCSV:
                     hints.append(f'Answer: {sense}')
                 else:
                     hints.append('')
-            dfs.label_level = 'raw'
+            dfs.data_level = 'raw'
             cur_df = dfs.get_dataframe(split=split)
             cur_df['hint'] = hints
             df_list.append(cur_df)
@@ -63,7 +63,7 @@ class BuildCSV:
 if __name__ == '__main__':
     BuildCSV(
         data_name='pdtb3',
-        label_level='level1',
+        data_level='top',
         data_relation='Implicit',
         data_path='/data/zpwang/Trainer/data/used/pdtb3.p1.csv',
         hint_ratio=0.1,

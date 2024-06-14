@@ -35,7 +35,7 @@ def experiment_args():
     args._version_info_list = [
         args.create_time,
         args.data_name,
-        args.label_level,
+        args.data_level,
         script_id,
         args.desc,
         f'ep{args.epochs}_bs{args.train_batch_size}_lr{args.learning_rate}',

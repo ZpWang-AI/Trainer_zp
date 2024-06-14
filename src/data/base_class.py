@@ -11,7 +11,7 @@ from transformers.data.data_collator import DataCollator
 from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import f1_score, accuracy_score
     
-from IDRR_data import DataFrames, DataFrames2, PromptFiller
+from IDRR_data import IDRRDataFrames, PromptFiller
 
 
 class CustomComputeMetrics:
@@ -54,7 +54,7 @@ class CustomComputeMetrics:
         
         pred = pred!=0
         assert ( pred.sum(axis=1)<=1 ).sum() == pred.shape[0]
-        # pred only one relation or no relation
+        # pred only one data_relation or no data_relation
         labels = labels!=0
         # labels = (labels != 0).astype(int)
         # print(pred, labels)
@@ -164,8 +164,8 @@ class CustomData:
         self, 
         data_path,
         data_name='pdtb2',
-        label_level='level1',
-        relation='Implicit',
+        data_level='top',
+        data_relation='Implicit',
         
         base_model_path='roberta-base',
         prompt={'x':'{arg1} {arg2}'},
@@ -175,10 +175,10 @@ class CustomData:
         mini_dataset=False,
         subtext_threshold=0,
     ):
-        self.dataframes = DataFrames2(
+        self.dataframes = IDRRDataFrames(
             data_name=data_name,
-            label_level=label_level,
-            relation=relation,
+            data_level=data_level,
+            data_relation=data_relation,
             data_path=data_path,
         )
         

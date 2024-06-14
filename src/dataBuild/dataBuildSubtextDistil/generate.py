@@ -22,7 +22,7 @@ from transformers import (DataCollatorWithPadding, set_seed,
                           )
 
 from utils_zp import dump_json, load_json
-from IDRR_data import DataFrames, DataFrames2, PromptFiller
+from IDRR_data import IDRRDataFrames, PromptFiller
 from data import CustomDataset
 from model import get_model_by_name, CustomModel
 
@@ -61,10 +61,10 @@ class GenerateMain:
         model.to('cuda:0')
         model.eval()
 
-        df = DataFrames2(
+        df = IDRRDataFrames(
             data_name=data_name,
-            label_level=data_level,
-            relation=data_relation,
+            data_level=data_level,
+            data_relation=data_relation,
             data_path=data_path,
         ).get_dataframe(split=data_split)
         
@@ -123,7 +123,7 @@ if __name__ == '__main__':
             hyperparams_path='/data/zpwang/Trainer/log_space_main/pdtb3_l1/subtext_distil/2024-05-22-17-56-51.pdtb3.level1.subtextdistil.base2.ep15_bs16_lr3e-05_flant5base/hyperparams.json',
             model_ckpt_path='/data/zpwang/Trainer/log_space_main/pdtb3_l1/subtext_distil/2024-05-22-17-56-51.pdtb3.level1.subtextdistil.base2.ep15_bs16_lr3e-05_flant5base/train_iter_0/checkpoint_best_Meteor/model.pth',
             data_name='pdtb3',
-            data_level='level1',
+            data_level='top',
             data_relation='Implicit',
             data_path='/data/zpwang/Trainer/data/used/pdtb3.p1.csv',
             data_split=split,

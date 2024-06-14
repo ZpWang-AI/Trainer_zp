@@ -8,7 +8,7 @@ from typing import *
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, DataCollatorWithPadding
 from sklearn.metrics import f1_score, accuracy_score
     
-from IDRR_data import DataFrames, PromptFiller
+from IDRR_data import PromptFiller
 from data import CustomDataCollator, CustomDataset, CustomData, CustomComputeMetrics
 
 from utils_zp import format_element_to_shape

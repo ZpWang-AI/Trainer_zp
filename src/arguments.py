@@ -30,7 +30,7 @@ class CustomArgs(ExpArgs):
         # ========== 'data' ========================
         self.part3 = 'data'
         self.data_name = 'pdtb3'
-        self.label_level = 'level1'
+        self.data_level = 'top'
         self.data_relation = 'Implicit'
         self.prompt = {'x': 'Arg1: {arg1}\nArg2: {arg2}', 'y': '{label11}'}
         self.max_input_length = 512
@@ -84,7 +84,7 @@ class CustomArgs(ExpArgs):
         self._version_info_list =[
             self.create_time,
             self.data_name,
-            self.label_level,
+            self.data_level,
             self.task_name,
             self.desc,
         ]

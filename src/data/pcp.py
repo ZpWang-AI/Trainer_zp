@@ -8,7 +8,7 @@ from typing import *
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, DataCollatorWithPadding
 from sklearn.metrics import f1_score, accuracy_score
     
-from IDRR_data import DataFrames, PromptFiller, DataFrames2
+from IDRR_data import PromptFiller, IDRRDataFrames
 from data import CustomDataCollator, CustomDataset, CustomData, CustomComputeMetrics
 
 from utils_zp import format_element_to_shape
@@ -77,7 +77,7 @@ class PCPData(CustomData):
     
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
-    #     self.dataframes = DataFrames2.from_DataFrames(self.dataframes)
+    #     self.dataframes = IDRRDataFrames.from_DataFrames(self.dataframes)
         
     def get_data_collator(self):
         return DataCollatorWithPadding(self.tokenizer)

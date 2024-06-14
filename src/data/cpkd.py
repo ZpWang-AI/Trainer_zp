@@ -9,7 +9,7 @@ from typing import *
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, DataCollatorWithPadding
 from sklearn.metrics import f1_score, accuracy_score
     
-from IDRR_data import DataFrames, PromptFiller, DataFrames2
+from IDRR_data import PromptFiller, IDRRDataFrames
 from data import CustomDataCollator, CustomDataset, CustomData, CustomComputeMetrics
 from data.pcp import PCPData
 

@@ -60,7 +60,7 @@ def base_experiment_args():
     # ========== 'data' ========================
     # args.part3 = 'data'
     args.data_name = 'pdtb3'
-    args.label_level = 'level1'
+    args.data_level = 'top'
     args.data_relation = 'Implicit'
     args.prompt = {'x': 'Arg1: {arg1}\nArg2: {arg2}', 'y': '{label11}'}
     args.secondary_label_weight = 0.5
@@ -122,7 +122,7 @@ def base_experiment_args():
     args._version_info_list = [
         args.create_time,
         args.data_name,
-        args.label_level,
+        args.data_level,
         args.task_name,
         args.desc,
         f'ep{args.epochs}_bs{args.train_batch_size}_lr{args.learning_rate}_secl{args.secondary_label_weight}',
