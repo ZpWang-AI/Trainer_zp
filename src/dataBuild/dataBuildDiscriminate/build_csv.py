@@ -13,7 +13,7 @@ from tqdm import tqdm
 sys.path.insert(0, str(path(__file__).parent.parent))
 
 from utils_zp import dump_json, load_json
-from IDRR_data import DataFrames, DataFrames2, PromptFiller
+from IDRR_data import IDRRDataFrames, PromptFiller
 from data import CustomDataset
 from model import get_model_by_name, CustomModel
 
@@ -29,10 +29,10 @@ class BuildCSV:
             setting = load_json(subtext_dir/'generate_setting.json')
             hparams = load_json(subtext_dir/'hyperparams.json')
             
-            cur_df = DataFrames2(
+            cur_df = IDRRDataFrames(
                 data_name=setting['data_name'],
-                label_level='raw',
-                relation=setting['data_relation'],
+                data_level='raw',
+                data_relation=setting['data_relation'],
                 data_path=setting['data_path'],
             ).get_dataframe(split=setting['data_split'])
             # cur_df['subtext'] = results
@@ -46,7 +46,7 @@ class BuildCSV:
             
 if __name__ == '__main__':
     BuildCSV([
-        '/data/zpwang/IDRR_ConnT5/data/subtext_discriminate/pdtb3_train_subtext_discriminate',
-        '/data/zpwang/IDRR_ConnT5/data/subtext_discriminate/pdtb3_dev_subtext_discriminate',
-        '/data/zpwang/IDRR_ConnT5/data/subtext_discriminate/pdtb3_test_subtext_discriminate',
-    ], target_csv='/data/zpwang/IDRR_ConnT5/data/subtext_discriminate/pdtb3_l1_implicit.subtext_distil_discriminate.csv')
+        '/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_train_subtext_discriminate',
+        '/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_dev_subtext_discriminate',
+        '/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_test_subtext_discriminate',
+    ], target_csv='/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_l1_implicit.subtext_distil_discriminate.csv')

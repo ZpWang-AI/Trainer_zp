@@ -8,7 +8,7 @@ from typing import *
 from transformers import AutoTokenizer, DataCollatorForSeq2Seq, DataCollatorWithPadding
 from sklearn.metrics import f1_score, accuracy_score
     
-from IDRR_data import DataFrames, PromptFiller, DataFrames2
+from IDRR_data import PromptFiller, IDRRDataFrames
 from data import CustomDataCollator, CustomDataset, CustomData, CustomComputeMetrics
 
 from utils_zp import format_element_to_shape
@@ -77,7 +77,7 @@ class PCPData(CustomData):
     
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
-    #     self.dataframes = DataFrames2.from_DataFrames(self.dataframes)
+    #     self.dataframes = IDRRDataFrames.from_DataFrames(self.dataframes)
         
     def get_data_collator(self):
         return DataCollatorWithPadding(self.tokenizer)
@@ -89,11 +89,11 @@ class PCPData(CustomData):
     ):
         num_ans_word = len(self.dataframes.get_ans_word_list())
         eye = np.eye(num_ans_word+1, num_ans_word)
-        primary_label_ids = df['conn1id'].astype(int)
+        primary_label_ids = df['ans_word1'].astype(int)
         label_vector = eye[primary_label_ids]
         if secondary_label_weight:
             eye *= secondary_label_weight
-            sec_label_ids = df['conn2id'].copy()
+            sec_label_ids = df['ans_word2'].copy()
             sec_label_ids[pd.isna(sec_label_ids)] = num_ans_word
             sec_label_ids = sec_label_ids.astype(int)
             label_vector += eye[sec_label_ids]

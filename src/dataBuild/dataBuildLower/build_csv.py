@@ -15,7 +15,7 @@ from tqdm import tqdm
 sys.path.insert(0, str(path(__file__).parent.parent))
 
 from utils_zp import dump_json, load_json
-from IDRR_data import DataFrames, DataFrames2, PromptFiller
+from IDRR_data import IDRRDataFrames, PromptFiller
 from data import CustomDataset
 from model import get_model_by_name, CustomModel
 
@@ -27,7 +27,7 @@ class BuildCSV:
     def __init__(
         self,
         # data_name,
-        # label_level,
+        # data_level,
         # data_relation,
         data_path,
         target_csv,
@@ -39,11 +39,11 @@ class BuildCSV:
             
 if __name__ == '__main__':
     BuildCSV(
-        data_path='/data/zpwang/IDRR_ConnT5/data/used/pdtb2.p1.csv',
-        target_csv='/data/zpwang/IDRR_ConnT5/data/used/pdtb2.p2.csv'
+        data_path='/data/zpwang/Trainer/data/used/pdtb2.p1.csv',
+        target_csv='/data/zpwang/Trainer/data/used/pdtb2.p2.csv'
     )
     
-    # df = pd.read_csv('/data/zpwang/IDRR_ConnT5/data/used/pdtb2.p1.csv')
+    # df = pd.read_csv('/data/zpwang/Trainer/data/used/pdtb2.p1.csv')
     # print(Counter(df['conn2']))
     # for row in df.itertuples():
     #     conn = row.conn1

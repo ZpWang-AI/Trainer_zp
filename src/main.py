@@ -17,7 +17,7 @@ from transformers import (TrainingArguments, Trainer, DataCollatorWithPadding, s
 from utils_zp import (catch_and_record_exception, AttrDict, dump_json,
                       count_parameters, GPUMemoryMonitor, set_process_title)
 from arguments import CustomArgs
-from IDRR_data import DataFrames2
+from IDRR_data import IDRRDataFrames
 from data import CustomData, CustomDataset, get_data_by_name, CustomComputeMetrics
 from model import get_model_by_name, BaselineClassificationConfig, BaselineGenerationConfig, MultitaskConfig, CustomModel
 # from trainer import CustomTrainer, get_trainer_by_name
@@ -52,7 +52,7 @@ class Main:
     }
 
     def __init__(self, args:CustomArgs) -> None:
-        set_process_title('Trainer')
+        # set_process_title('Trainer')
         self.main_one_round(args)
     
     def main_one_round(self, args:CustomArgs):
@@ -69,8 +69,8 @@ class Main:
         data = data_class(
             data_path=args.data_path,
             data_name=args.data_name,
-            label_level=args.label_level,
-            relation=args.data_relation,
+            data_level=args.data_level,
+            data_relation=args.data_relation,
             
             base_model_path=args.base_model_path,
             prompt=args.prompt,
@@ -78,8 +78,6 @@ class Main:
             max_length=args.max_input_length,
             secondary_label_weight=args.secondary_label_weight,
             mini_dataset=args.mini_dataset,
-            data_augmentation_flatten_sec_label=args.data_augmentation_flatten_sec_label,
-            data_augmentation_add_conn_to_arg2=args.data_augmentation_add_conn_to_arg2,
             subtext_threshold=args.subtext_threshold,
         )
         data: CustomData
@@ -93,7 +91,7 @@ class Main:
             label_list=data.label_list,
             loss_type='CELoss',
         )
-        if isinstance(data.dataframes, DataFrames2) and (
+        if (
             isinstance(data.tokenizer, transformers.RobertaTokenizer) or
             isinstance(data.tokenizer, transformers.RobertaTokenizerFast)
         ):
