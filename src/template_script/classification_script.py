@@ -1,4 +1,4 @@
-from base_setting import *
+from script_head import *
 
 
 def experiment_args():
