@@ -1,11 +1,6 @@
-import os
-import json
+from utils_zp.common_import import *
 
-from typing import *
-from pathlib import Path as path
-from datetime import datetime
-
-from utils_zp import AttrDict, ExpArgs
+from utils_zp import AttrDict, ExpArgs, make_path
 
 
 class CustomArgs(ExpArgs):
@@ -121,10 +116,8 @@ class CustomArgs(ExpArgs):
     def check_path(self):
         assert path(self.data_path).exists(), 'wrong data path'
         assert path(self.base_model_path).exists(), 'wrong model path'
-        path(self.log_dir).mkdir(parents=True, exist_ok=True)
-        if not self.ckpt_dir:
-            self.ckpt_dir = self.log_dir
-        path(self.ckpt_dir).mkdir(parents=True, exist_ok=True)
+        make_path(dir_path=self.log_dir)
+        make_path(dir_path=self.ckpt_dir)
     
     def recalculate_eval_log_steps(self):
         self.real_batch_size = self.train_batch_size \

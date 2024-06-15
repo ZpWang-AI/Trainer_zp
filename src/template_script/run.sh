@@ -15,5 +15,6 @@ filename="${filename%.*}"
 echo $torun_file
 echo "start running"
 
+mkdir -p $log_dir
 log_path="${log_dir}/${start_time}.${filename}.log"
 nohup /home/qwe/miniconda3/envs/zpwang_main/bin/python $torun_file > $log_path 2>&1 &

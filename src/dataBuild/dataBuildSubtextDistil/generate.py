@@ -1,22 +1,17 @@
-import os
-import sys
-from pathlib import Path as path
+from utils_zp.common_import import *
 sys.path.insert(0, str(path(__file__).parent.parent))
 
 from utils_zp.gpu_utils import GPUManager
 CUDA_CNT = 1  
 CUDA_ID = GPUManager.set_cuda_visible(target_mem_mb=24000, cuda_cnt=CUDA_CNT)
 
-import json
 import shutil
 import torch
 import torch.nn as nn
 import pandas as pd 
 import numpy as np
-import time
 import transformers
 
-from typing import *
 from tqdm import tqdm
 from transformers import (DataCollatorWithPadding, set_seed,
                           )

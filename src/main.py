@@ -58,6 +58,8 @@ class Main:
     def main_one_round(self, args:CustomArgs):
         from copy import deepcopy
 
+        if not args.ckpt_dir:
+            args.ckpt_dir = args.log_dir
         args.ckpt_dir = path(args.ckpt_dir)/args.version
         args.log_dir = path(args.log_dir)/args.version
         args.check_path()
