@@ -96,8 +96,8 @@ class Main:
             isinstance(data.tokenizer, transformers.RobertaTokenizerFast)
         ):
             args.fill_model_config(
-                ans_word_list_token=data.dataframes.get_ans_word_list(tokenizer=data.tokenizer),
-                ans_label_list_id=data.dataframes.get_ans_label_list(use_label_id=True),
+                ans_word_list_token=data.dataframes.get_ans_word_token_id_list(tokenizer=data.tokenizer),
+                ans_label_list_id=data.dataframes.ans_lid_list,
             )
         
         # === gpu mem ===

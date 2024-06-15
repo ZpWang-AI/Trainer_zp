@@ -202,7 +202,7 @@ class CustomData:
         self.mini_dataset = mini_dataset
         self.subtext_threshold = subtext_threshold
 
-        self.label_list = self.dataframes.get_label_list()
+        self.label_list = self.dataframes.label_list
         self.num_labels = len(self.label_list)
         self.label_map = {label:p for p, label in enumerate(self.label_list)}
 
@@ -226,11 +226,11 @@ class CustomData:
         secondary_label_weight=0.,
     ):
         eye = np.eye(self.num_labels+1, self.num_labels)
-        primary_label_ids = df['label11'].astype(int)
+        primary_label_ids = df['label11id'].astype(int)
         label_vector = eye[primary_label_ids]
         if secondary_label_weight:
             eye *= secondary_label_weight
-            for sec_label_ids in [df['label12'], df['label21'], df['label22']]:
+            for sec_label_ids in [df['label12id'], df['label21id'], df['label22id']]:
                 sec_label_ids = sec_label_ids.copy()
                 sec_label_ids[pd.isna(sec_label_ids)] = self.num_labels
                 sec_label_ids = sec_label_ids.astype(int)
