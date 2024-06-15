@@ -264,10 +264,8 @@ class Main:
             metric_names=compute_metrics.metric_names,
             ckpt_dir=args.ckpt_dir,
             test_dataset=data.test_dataset,
-            log_filename=self.log_filename_dict['test']
         )
-        dump_json(test_metrics, args.log_dir/self.log_filename_dict['test'], indent=4)
-        print(json.dumps(test_metrics, indent=4))
+        print(dump_json(test_metrics, args.log_dir/self.log_filename_dict['test'], indent=4))
         return trainer, callback
     
     def test(
@@ -277,7 +275,6 @@ class Main:
         test_dataset:CustomDataset,
         metric_names:List[str],
         ckpt_dir:str,
-        log_filename:str,
     ):
         test_metrics = {}
         for metric_ in metric_names:
@@ -292,7 +289,9 @@ class Main:
                     model.load_state_dict(torch.load(load_ckpt_dir/'model.pth'))
                 else:
                     raise Exception('wrong ckpt path')
-                evaluate_output = trainer.evaluate(eval_dataset=test_dataset)
+                evaluate_output = trainer.evaluate(eval_dataset=test_dataset,)
                 test_metrics['test_'+metric_] = evaluate_output['eval_'+metric_]
+            else:
+                print(f'metric {metric_} can not find ckpt')
         return test_metrics
  

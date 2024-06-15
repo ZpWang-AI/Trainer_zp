@@ -1,6 +1,7 @@
 from model.base_class import *
 from model.BaselineClassification import *
 from model.BaselineGeneration import *
+from model.CompareSimilarityModel import *
 from model.CPKD import *
 from model.MultiTaskModel import *
 from model.PCPModel import *
