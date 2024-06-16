@@ -19,10 +19,12 @@ class CompareSimilarityConfig(AttrDict):
     def __init__(
         self, 
         base_model_path=None,
+        ft_model_path=None,
         num_labels=4,
         loss_type='CELoss',
     ) -> None:
         self.base_model_path = base_model_path
+        self.ft_model_path = ft_model_path
         self.num_labels = num_labels
         self.loss_type = loss_type
         
