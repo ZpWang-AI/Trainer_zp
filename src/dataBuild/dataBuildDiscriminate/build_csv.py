@@ -1,16 +1,9 @@
-import os
-import sys
-import json
+from utils_zp.common_import import *
 import shutil
 import pandas as pd 
 import numpy as np
-import time
 
-from typing import *
-from pathlib import Path as path
-from tqdm import tqdm
-
-sys.path.insert(0, str(path(__file__).parent.parent))
+sys.path.insert(0, str(path(__file__).parent.parent.parent))
 
 from utils_zp import dump_json, load_json
 from IDRR_data import IDRRDataFrames, PromptFiller
@@ -20,7 +13,7 @@ from model import get_model_by_name, CustomModel
 
 
 class BuildCSV:
-    def __init__(self, subtext_dirs, target_csv) -> None:
+    def __init__(self, subtext_dirs, target_csv, column_name) -> None:
         df_list = []
         
         for subtext_dir in subtext_dirs:
@@ -36,7 +29,7 @@ class BuildCSV:
                 data_path=setting['data_path'],
             ).get_dataframe(split=setting['data_split'])
             # cur_df['subtext'] = results
-            cur_df['subtext_res'] = results
+            cur_df[column_name] = results
             df_list.append(cur_df)
 
         res_df = pd.concat(df_list, axis=0, ignore_index=True,)
@@ -45,8 +38,19 @@ class BuildCSV:
             
             
 if __name__ == '__main__':
-    BuildCSV([
-        '/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_train_subtext_discriminate',
-        '/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_dev_subtext_discriminate',
-        '/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_test_subtext_discriminate',
-    ], target_csv='/data/zpwang/Trainer/data/subtext_discriminate/pdtb3_l1_implicit.subtext_distil_discriminate.csv')
+    # BuildCSV([
+    #     '/data/zpwang/Trainer/data/dataBuild/compare_similarity/pdtb3_dev_cmp_sim',
+    #     '/data/zpwang/Trainer/data/dataBuild/compare_similarity/pdtb3_test_cmp_sim',
+    #     '/data/zpwang/Trainer/data/dataBuild/compare_similarity/pdtb3_train_cmp_sim',
+    # ], 
+    #          target_csv='/data/zpwang/Trainer/data/dataBuild/compare_similarity/pdtb3_l1_implicit.cmp_sim.csv',
+    #          column_name='st_cmp_sim')
+    BuildCSV(
+        [
+            '/data/zpwang/Trainer/data/dataBuild/subtext_discriminate4/pdtb3_dev_subtext_distill_discriminate',
+            '/data/zpwang/Trainer/data/dataBuild/subtext_discriminate4/pdtb3_test_subtext_distill_discriminate',
+            '/data/zpwang/Trainer/data/dataBuild/subtext_discriminate4/pdtb3_train_subtext_distill_discriminate',
+        ],
+        target_csv='/data/zpwang/Trainer/data/dataBuild/subtext_discriminate4/pdtb3_l1_implicit.st_discriminate4.csv',
+        column_name='st_discriminate'
+    )

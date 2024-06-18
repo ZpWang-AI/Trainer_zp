@@ -41,8 +41,8 @@ class CalSimilarityMain:
         
         output_dir,
     ) -> None:
-        device = f'cuda:{CUDA_ID}'
         device = f'cuda:0'
+        
         hparams = load_json(hyperparams_path)
         model_config = CompareSimilarityConfig.from_dict(hparams['model_config'])
         model_config.ft_model_path = model_ckpt_path

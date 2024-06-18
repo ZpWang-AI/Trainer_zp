@@ -85,4 +85,10 @@ class SubtextDiscriminatorModel(CustomModel):
         # print(pred_vec)
         return pred_vec
     
-        
+    def get_logits(self, input_ids, attention_mask):
+        model_outputs = self.model(
+            input_ids=input_ids,
+            attention_mask=attention_mask
+        )
+        logits = model_outputs.logits  # bs, seq_len, vocab_size
+        return logits
