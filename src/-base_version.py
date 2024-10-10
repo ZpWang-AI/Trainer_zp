@@ -1,33 +1,49 @@
 from IDRR_data import *
-from utils_zp import *
 
-os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+import os
+from pathlib import Path as path
+
+os.environ["CUDA_VISIBLE_DEVICES"] = '1'
 
 import transformers
 from sklearn.metrics import f1_score, accuracy_score
 from torch.utils.data import Dataset
 from transformers import (Trainer, TrainingArguments, AutoModelForSequenceClassification, DataCollatorWithPadding, AutoTokenizer)
+from transformers import TrainerCallback, TrainerState, TrainerControl
+
 
 
 SRC_DIR = path(__file__).parent
 ROOT_DIR = SRC_DIR.parent
 
+
+# === data ===
+dfs = IDRRDataFrames(
+    data_name='pdtb2',
+    data_level='top',
+    data_relation='Implicit',
+    data_path='/home/zpwang/IDRR_data/data/used/pdtb2.p1.csv',
+)
+label_list = dfs.label_list
+
 # === model ===
-model_name_or_path = r'D:\0--data\pretrained_models\roberta-base'
-model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path)
+model_name_or_path = '/home/zpwang/pretrained_models/roberta-base'
+model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path, num_labels=len(label_list))
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
 
 # === args ===
 training_args = TrainingArguments(
     output_dir=ROOT_DIR/'output_dir',
+    overwrite_output_dir=True,
     
     # strategies of evaluation, logging, save
     evaluation_strategy = "steps", 
-    eval_steps = 100,
+    eval_steps = 1,
     logging_strategy = 'steps',
-    logging_steps = 10,
-    save_strategy = 'step3',
-    save_steps = 1000,
+    logging_steps = 1,
+    save_strategy = 'steps',
+    save_steps = 1,
+    max_steps=2,
     
     # optimizer and lr_scheduler
     optim = 'adamw_torch',
@@ -49,15 +65,7 @@ training_args = TrainingArguments(
     fp16=False,
 )
 
-# === data ===
-dfs = IDRRDataFrames(
-    data_name='pdtb2',
-    data_level='top',
-    data_relation='Implicit',
-    data_path=r'D:\0--data\projects\research_IDRR\00-IDRR_data\data\used\pdtb2.p1.csv',
-)
-label_list = dfs.label_list
-
+# === dataset ===
 class CustomDataset(Dataset):
     def __init__(self, df, label_list, tokenizer) -> None:
         self.df:pd.DataFrame = df
@@ -107,7 +115,11 @@ class ComputeMetrics:
         pred = pred[..., :len(self.label_list)]
         labels = labels[..., :len(self.label_list)]
         
-        pred = pred!=0
+        # pred = pred!=0
+        max_indices = np.argmax(pred, axis=1)
+        bpred = np.zeros_like(pred, dtype=int)
+        bpred[np.arange(pred.shape[0]), max_indices] = 1
+        pred = bpred
         assert ( pred.sum(axis=1)<=1 ).sum() == pred.shape[0]
         labels = labels!=0
         
@@ -116,6 +128,25 @@ class ComputeMetrics:
             'Acc': np.sum(pred*labels)/len(pred),
         }
         return res
+
+# === callback ===
+class CustomCallback(TrainerCallback):
+    def __init__(
+        self, 
+        log_filepath=None,
+    ):
+        super().__init__()
+        if log_filepath:
+            self.log_filepath = log_filepath
+        else:
+            self.log_filepath = ROOT_DIR / 'output_dir' / 'log.jsonl'
+    
+    def on_log(self, args: TrainingArguments, state: TrainerState, control: TrainerControl, **kwargs):
+        with open(self.log_filepath, 'a', encoding='utf8')as f:
+            f.write(str(kwargs['logs'])+'\n')
+
+    def on_evaluate(self, args, state, control, metrics:Dict[str, float], **kwargs):
+        pass
     
 
 trainer = Trainer(
@@ -126,10 +157,10 @@ trainer = Trainer(
     eval_dataset=dev_dataset,
     tokenizer=tokenizer,
     compute_metrics=ComputeMetrics(dfs.label_list),
-    # callbacks='',
+    callbacks=[CustomCallback()],
 )
 
 train_result = trainer.train()
 test_result = trainer.evaluate(eval_dataset=test_dataset)
-print(train_result)
-print(test_result)
+print(f'> train_result:\n  {train_result}')
+print(f'> test_result:\n  {test_result}')
