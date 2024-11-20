@@ -1,13 +1,11 @@
-from utils_zp.common_import import *
-
-from utils_zp import AttrDict, ExpArgs, make_path
+from utils_zp import *
 
 
 class CustomArgs(ExpArgs):
     def __init__(self) -> None:
         self.desc = 'init'
         
-        # ========== 'base setting' ================
+        # =========== base setting ===============
         self.part1 = 'base setting'
         self.task_name = 'classification'
         self.save_ckpt = False
@@ -15,45 +13,46 @@ class CustomArgs(ExpArgs):
         self.cuda_cnt = 1
         self.training_iteration = 5
         
-        # ========== 'file path' ===================
-        self.part2 = 'file path'
-        self.data_path = '/public/home/hongy/zpwang/Trainer/data/used/pdtb3.p1.csv'
-        self.base_model_path = 'roberta-base'
+        # =========== filepath ==================
+        self.part2 = 'filepath'
         self.log_dir:path = '/content/drive/MyDrive/IDRR/log_space'
         self.ckpt_dir:path = ''
+        # self.data_path = '/public/home/hongy/zpwang/Trainer/data/used/pdtb3.p1.csv'
+        # self.base_model_path = 'roberta-base'
 
-        # ========== 'data' ========================
+        # =========== data =======================
         self.part3 = 'data'
         self.data_name = 'pdtb3'
-        self.data_level = 'top'
-        self.data_relation = 'Implicit'
-        self.prompt = {'x': 'Arg1: {arg1}\nArg2: {arg2}', 'y': '{label11}'}
-        self.max_input_length = 512
-        self.secondary_label_weight = 0.5
-        self.mini_dataset = False
-        self.subtext_threshold = 0
+        self.data_config:dict = None
+        # self.data_level = 'top'
+        # self.data_relation = 'Implicit'
+        # self.prompt = {'x': 'Arg1: {arg1}\nArg2: {arg2}', 'y': '{label11}'}
+        # self.max_input_length = 512
+        # self.secondary_label_weight = 0.5
+        # self.mini_dataset = False
+        # self.subtext_threshold = 0
 
-        self.trainset_size = -1
-        self.devset_size = -1
-        self.testset_size = -1
+        # self.trainset_size = -1
+        # self.devset_size = -1
+        # self.testset_size = -1
         
-        # ========== 'model' =======================
+        # =========== model ======================
         self.part4 = 'model'
         self.model_name = 'baselineclassificationmodel'
         self.model_config:dict = None
         
-        self.base_model = ''
-        self.model_parameter_cnt = ''
+        # self.base_model = ''
+        # self.model_parameter_cnt = ''
 
-        # ========== 'trainer' ===================
+        # =========== trainer ====================
         self.part5 = 'trainer'
         self.weight_decay = 0.01
         self.learning_rate = 3e-5
         self.bf16 = False
         self.fp16 = False
         
-        # ========== 'epoch, batch, step' ==========
-        self.part6 = 'epoch, batch, step'
+        # =========== epoch, batch =========
+        self.part6 = 'epoch, batch'
         self.max_steps = -1
         self.warmup_ratio = 0.05
         self.epochs = 25
@@ -67,26 +66,21 @@ class CustomArgs(ExpArgs):
         self.real_batch_size = -1
         self.eval_samples = -1
         
-        # ========== 'additional details' ==========
+        # =========== additional details =========
         self.part7 = 'additional details'
         self.cuda_id = ''
         self.server_name = ''
-        self.create_time = ''
+        self.create_time:Datetime_ = ''
 
         self.format_part()
         self.set_create_time()
         
         self._version_info_list =[
-            self.create_time,
-            self.data_name,
-            self.data_level,
-            self.task_name,
+            self.create_time.format_str(2),
+            self.data_config['version'],
+            self.model_config['version'],
             self.desc,
         ]
-        
-    @property
-    def version(self):
-        return '.'.join(self._version_info_list)
         
     # def estimate_cuda_memory(self):
     #     return 30000
@@ -132,4 +126,4 @@ class CustomArgs(ExpArgs):
         
 
 if __name__ == '__main__':
-    CustomArgs.format_part_in_file(__file__)
+    CustomArgs().format_part_in_file(__file__)
