@@ -1,15 +1,4 @@
-import json
-import os
-import numpy as np
-import pandas as pd
-
-from typing import *
-from transformers import AutoTokenizer, DataCollatorForSeq2Seq, DataCollatorWithPadding
-from sklearn.metrics import f1_score, accuracy_score
-    
-from IDRR_data import PromptFiller
-from data import (CustomDataCollator, CustomDataset, 
-                  CustomData, CustomComputeMetrics)
+from .base_class import *
 
 
 # class ClassificationComputeMetrics(CustomComputeMetrics):

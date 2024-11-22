@@ -1,17 +1,7 @@
-import json
-import os
-import random
-import numpy as np
-import pandas as pd
-import transformers
+from ...core_data import *
 
-from typing import *
-from transformers import AutoTokenizer, DataCollatorForSeq2Seq, DataCollatorWithPadding
-from transformers.data.data_collator import DataCollator
-from torch.utils.data import Dataset, DataLoader
-from sklearn.metrics import f1_score, accuracy_score
-    
-from IDRR_data import IDRRDataFrames, PromptFiller
+with ignore_exception:
+    from IDRR_data import IDRRDataFrames, PromptFiller
 
 
 class CustomComputeMetrics:

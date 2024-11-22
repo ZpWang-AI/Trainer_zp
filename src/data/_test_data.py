@@ -1,6 +1,5 @@
-import sys, os
-from pathlib import Path as path
-sys.path.insert(0, str(path(__file__).parent.parent))
+from utils_zp import *
+add_sys_path(__file__, 2)
 
 from data import *
 
