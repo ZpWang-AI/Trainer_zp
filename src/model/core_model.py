@@ -21,6 +21,8 @@ from .load_model import *
 
 class CustomModelConfig(AttrDict):
     def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
         self.transformers_config = None
         self.base_model = None
         self.model_param_cnt = {
@@ -31,7 +33,7 @@ class CustomModelConfig(AttrDict):
     def refill(
         self,
         base_model_or_path,
-        model,
+        model:"CustomModel",
     ):
         self.base_model = path(base_model_or_path).stem
         self.model_param_cnt = count_parameters(model=model)
