@@ -1,18 +1,5 @@
-import numpy as np
-import torch 
-import torch.nn as nn 
-import transformers
-
-from transformers import (AutoConfig,
-                          AutoTokenizer,
-                          AutoModel,
-                          AutoModelForSequenceClassification,
-                          PreTrainedModel,
-                          GenerationConfig,
-                          )
-
-from model import CustomModel, BaselineClassificationModel
-from utils_zp.attr_dic import AttrDict
+from ..core_model import *
+from .BaselineClassification import BaselineClassificationModel
 
 
 class CompareSimilarityConfig(AttrDict):

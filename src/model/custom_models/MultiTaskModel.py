@@ -1,22 +1,4 @@
-import numpy as np
-import torch 
-import torch.nn as nn 
-import transformers
-
-from transformers import (AutoConfig,
-                          AutoTokenizer,
-                          AutoModel,
-                          AutoModelForSeq2SeqLM,
-                          AutoModelForSequenceClassification,
-                          PreTrainedModel,
-                          T5Model,
-                          GenerationConfig
-                          )
-
-from model.criterion import CELoss
-from model import CustomModel
-from utils_zp.attr_dic import AttrDict
-from utils_zp import format_element_to_shape
+from ..core_model import *
 
 
 class MultitaskConfig(AttrDict):

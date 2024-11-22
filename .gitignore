@@ -1,33 +1,39 @@
-# *.sh
-*.cmd
-*.zip
-*.ipynb
-*.log
-_*
-!__init__.py
-*tmp*
-*test*
-*old*
-
 __pycache__
-logs
 .vscode
-# .gitignore
 .git
+.DS_Store
 nohup.out
+
+*backup*/
+*trash*/
+*log*/
+*tmp*/
+old/
+local/
+# *archive
+
+# *.sh
+# *.cmd
+# *.ipynb
+*.zip
+*.7z
+*.log
+# *test*
+~*
+*~
+*~.*
+*.old*
 
 # ==============================
 
 /*
 !/.gitignore
+!/prompts.md
 !/README.md
 !/requirements.txt
 !/src
 
 # src
 src/scripts
-!src/model/_test_model.py
-!src/data/_test_data.py
-!src/data/test_data.py
 
 # data

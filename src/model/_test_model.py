@@ -1,21 +1,18 @@
-import sys, os
-from pathlib import Path as path
-sys.path.insert(0, str(path(__file__).parent.parent))
+from utils_zp import *
+add_sys_path(__file__, 2)
 
 import torch
-import time
 from transformers import AutoTokenizer
 
 from model import *
-from utils_zp import count_parameters
+from utils_zp.ml import count_parameters
 
 
-def test_model(sample_model):
+def test_model(sample_model, sample_tokenizer):
     print(sample_model)
     print('param num:', count_parameters(sample_model))
     print('='*30)
     
-    sample_tokenizer = AutoTokenizer.from_pretrained(base_model_path)
     sample_x = ['你好']*2+['hello world. Nice to see you']*3
     sample_x_token = sample_tokenizer(sample_x, padding=True, return_tensors='pt',)
     sample_y = torch.Tensor([
@@ -44,18 +41,28 @@ def test_model(sample_model):
 
 
 def demo_CELoss():
-    y_pred = torch.tensor([[0.8, 0.5, 0.9, 0.4, 0.7],
+    logits = torch.tensor([[0.8, 0.5, 0.9, 0.4, 0.7],
                         [0.3, 0.6, 0.1, 0.7, 0.5]])
+    y_pred = torch.softmax(logits, dim=1)
     y_true = torch.tensor([[1, 0, 0, 0, 0],
                         [0, 1, 0, 0, 0]])       
     y_true2 = torch.tensor([0, 1]) 
     criterion1 = CELoss()
     criterion2 = nn.CrossEntropyLoss(reduction='mean')
     loss1 = criterion1(y_pred, y_true)
-    loss2 = criterion2(y_pred, y_true2)
+    loss2 = criterion2(logits, y_true2)
     print(loss1, loss2, sep='\n')
 
 
 if __name__ == '__main__':
+    # demo_CELoss()
     base_model_path = '/public/home/hongy/pretrained_models/flan-t5-large/'
-    test_model(BaselineT5Model(base_model_path=base_model_path, num_labels=4, loss_type='CELoss'))
+    base_model_path = r'D:\pretrained_models\roberta-base'
+    # model = AutoModel.from_pretrained('roberta-base', cache_dir=r'D:\pretrained_models', output_loading_info=True)
+    # model, loading_info = transformers.RobertaForMaskedLM.from_pretrained('roberta-base', output_loading_info=True)
+    model, loading_info = transformers.BertForPreTraining.from_pretrained('bert-base-uncased', output_loading_info=True)
+    test_model(
+        sample_model=BaselineClassificationModel(base_model_path=base_model_path, num_labels=4, loss_type='CELoss'), 
+        sample_tokenizer=AutoTokenizer.from_pretrained(base_model_path),
+    )
+    

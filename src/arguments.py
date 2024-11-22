@@ -7,7 +7,6 @@ class CustomArgs(ExpArgs):
         
         # =========== base setting ===============
         self.part1 = 'base setting'
-        self.task_name = 'classification'
         self.save_ckpt = False
         self.seed = 2023
         self.cuda_cnt = 1
@@ -22,8 +21,8 @@ class CustomArgs(ExpArgs):
 
         # =========== data =======================
         self.part3 = 'data'
-        self.data_name = 'pdtb3'
-        self.data_config:dict = None
+        self.data_name = 'classification'
+        self.data_config:dict = {}
         # self.data_level = 'top'
         # self.data_relation = 'Implicit'
         # self.prompt = {'x': 'Arg1: {arg1}\nArg2: {arg2}', 'y': '{label11}'}
@@ -39,7 +38,7 @@ class CustomArgs(ExpArgs):
         # =========== model ======================
         self.part4 = 'model'
         self.model_name = 'baselineclassificationmodel'
-        self.model_config:dict = None
+        self.model_config:dict = {}
         
         # self.base_model = ''
         # self.model_parameter_cnt = ''
@@ -51,8 +50,6 @@ class CustomArgs(ExpArgs):
         self.bf16 = False
         self.fp16 = False
         
-        # =========== epoch, batch =========
-        self.part6 = 'epoch, batch'
         self.max_steps = -1
         self.warmup_ratio = 0.05
         self.epochs = 25
@@ -77,39 +74,12 @@ class CustomArgs(ExpArgs):
         
         self._version_info_list =[
             self.create_time.format_str(2),
-            self.data_config['version'],
-            self.model_config['version'],
+            self.data_name,
+            self.model_name,
             self.desc,
         ]
-        
-    # def estimate_cuda_memory(self):
-    #     return 30000
-    
-    # def prepare_gpu(self, target_mem_mb=10000, gpu_cnt=None):
-    #     if not self.cuda_id:
-    #         if target_mem_mb < 0:
-    #             target_mem_mb = self.estimate_cuda_memory()
-    #         if gpu_cnt is None:
-    #             gpu_cnt = self.cuda_cnt
-
-    #         from utils_zp import GPUManager
-    #         free_gpu_ids = GPUManager.get_free_gpus(
-    #             gpu_cnt=gpu_cnt, 
-    #             target_mem_mb=target_mem_mb,
-    #         )
-    #         os.environ["CUDA_VISIBLE_DEVICES"] = free_gpu_ids
-    #         self.cuda_id = free_gpu_ids
-    #         print(f'=== CUDA {free_gpu_ids} ===')
-    #     return self.cuda_id
-    
-    def fill_model_config(self, **kwargs):
-        if not isinstance(self.model_config, AttrDict):
-            self.model_config = AttrDict.from_dict(self.model_config)
-        self.model_config.merge_dict(kwargs, overwrite_existing=False)
 
     def check_path(self):
-        assert path(self.data_path).exists(), 'wrong data path'
-        assert path(self.base_model_path).exists(), 'wrong model path'
         make_path(dir_path=self.log_dir)
         make_path(dir_path=self.ckpt_dir)
     
@@ -117,8 +87,8 @@ class CustomArgs(ExpArgs):
         self.real_batch_size = self.train_batch_size \
                              * self.gradient_accumulation_steps \
                              * self.cuda_cnt
-        if self.eval_per_epoch > 0:
-            self.eval_steps = int(self.trainset_size / self.eval_per_epoch / self.real_batch_size)
+        if self.eval_per_epoch > 0 and 'trainset_size' in self.data_config:
+            self.eval_steps = int(self.data_config['trainset_size'] / self.eval_per_epoch / self.real_batch_size)
             self.log_steps = self.eval_steps // 10
             self.eval_steps = max(1, self.eval_steps)
             self.log_steps = max(1, self.log_steps)

@@ -1,19 +1,4 @@
-import numpy as np
-import torch 
-import torch.nn as nn 
-import transformers
-
-from typing import *
-from transformers import (AutoConfig,
-                          AutoTokenizer,
-                          AutoModel,
-                          AutoModelForSequenceClassification,
-                          GenerationConfig
-                          )
-
-from model import CustomModel
-from model.criterion import CELoss
-from utils_zp.attr_dic import AttrDict
+from ..core_model import *
 
 
 class SubtextDiscriminatorConfig(AttrDict):
