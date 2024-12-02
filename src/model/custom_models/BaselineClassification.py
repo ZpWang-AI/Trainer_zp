@@ -14,8 +14,6 @@ class BaselineClassificationConfig(CustomModelConfig):
         
         
 class BaselineClassificationModel(CustomModel):
-    # predict_with_generate=False
-    
     def __init__(
         self, 
         model_config:BaselineClassificationConfig,

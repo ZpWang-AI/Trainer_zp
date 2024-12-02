@@ -11,27 +11,20 @@ from sklearn.metrics import f1_score, accuracy_score
 
 
 class CustomComputeMetrics:
-    def __init__(self, label_list:list) -> None:
-        self.metric_names = None
+    metric_names = None
     
     def __call__(self, eval_pred):
         raise Exception()
     
 
 class CustomDataCollator:
-    # tokenizer
-    def __init__(self, tokenizer):
-        raise Exception()
-    #     self.tokenizer = tokenizer
-        
+    tokenizer = None
+    
     def __call__(self, features, return_tensors=None):
         raise Exception()
     
 
 class CustomDataset(Dataset):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-    
     def __getitem__(self, index):
         raise Exception()
     
@@ -64,7 +57,6 @@ class CustomData:
     
     def get_compute_metrics(self):
         raise Exception()
-        return CustomComputeMetrics(self.label_list)
     
     def get_dataset(
         self,

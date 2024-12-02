@@ -24,7 +24,7 @@ class CustomModelConfig(AttrDict):
         super().__init__(*args, **kwargs)
         
         self.transformers_config = None
-        self.base_model = None
+        self.base_model_name = None
         self.model_param_cnt = {
             'total': None,
             'trainable': None,
@@ -35,13 +35,11 @@ class CustomModelConfig(AttrDict):
         base_model_or_path,
         model:"CustomModel",
     ):
-        self.base_model = path(base_model_or_path).stem
+        self.base_model_name = path(base_model_or_path).stem
         self.model_param_cnt = count_parameters(model=model)
 
 
 class CustomModel(nn.Module):
-    # predict_with_generate:bool
-    
     def __init__(self, model_config:CustomModelConfig=None) -> None:
         super().__init__()
         self.model_config = model_config

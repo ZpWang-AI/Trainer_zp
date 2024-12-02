@@ -4,23 +4,15 @@ with ignore_exception:
     from IDRR_data import IDRRDataFrames, PromptFiller
 
 
-class CustomComputeMetrics:
+class IDRRComputeMetrics(CustomComputeMetrics):
     label_list: List[str]
     metric_names: List[str]
     
     def __init__(self, label_list:list) -> None:
         self.label_list = label_list
-        self.num_labels = len(label_list)
+        self.label_num = len(label_list)
         # self.metric_names = ['Macro-F1', 'Acc']+label_list
         self.metric_names = ['Macro-F1']
-    
-    # def process_pred(self, pred):
-    #     """
-    #     return:
-    #         np.array(int 0/1) [datasize, n]
-    #     """
-    #     raise Exception()
-    #     pass
     
     def __call__(self, eval_pred):
         """
@@ -34,21 +26,14 @@ class CustomComputeMetrics:
         pred, labels = eval_pred
         pred: np.ndarray
         labels: np.ndarray
-        # print(pred, labels)
-        # pred = self.process_pred(pred)
-        # pred = np.argmax(pred[0], axis=1)
-        # pred = np.eye(self.num_labels+1, self.num_labels)[pred]
         
-        pred = pred[..., :len(self.label_list)]
-        labels = labels[..., :len(self.label_list)]
+        pred = pred[..., :self.label_num]
+        labels = labels[..., :self.label_num]
         
         pred = pred!=0
-        assert ( pred.sum(axis=1)<=1 ).sum() == pred.shape[0]
-        # pred only one data_relation or no data_relation
+        # assert ( pred.sum(axis=1)<=1 ).sum() == pred.shape[0]
+        # # pred only one data_relation or no data_relation
         labels = labels!=0
-        # labels = (labels != 0).astype(int)
-        # print(pred, labels)
-        # exit()
         
         res = {
             'Macro-F1': f1_score(labels, pred, average='macro', zero_division=0),
@@ -61,7 +46,7 @@ class CustomComputeMetrics:
         return res
     
 
-class CustomDataCollator:
+class IDRRDataCollator(CustomDataCollator):
     # tokenizer
     def __init__(self, tokenizer):
         raise Exception()
@@ -72,7 +57,7 @@ class CustomDataCollator:
         raise Exception()
     
 
-class CustomDataset(Dataset):
+class IDRRDataset(CustomDataset):
     def __init__(
         self, 
         tokenizer:transformers.PreTrainedTokenizer,
@@ -87,32 +72,29 @@ class CustomDataset(Dataset):
         
         self.tokenizer = tokenizer
         self.x_strs = x_strs
-        self.y_strs = y_strs
+        self.y_strs = [self.token_encode(p).input_ids for p in y_strs] if y_strs is not None else None
         self.y_nums = y_nums
         self.max_length = max_length    
         # assert max_length <= tokenizer.max_model_input_sizes
         
         self.n = len(self.x_strs)
-        self.shift_num = shift_num % self.n  # manually random the data by shiftting indices
+        self.shift_num = shift_num  # manually random the data by shiftting indices
         
     def token_encode(self, target_str:str):
         if '<sep>' in target_str:
-            s1, s2 = target_str.split('<sep>')
-            return self.tokenizer(
-                s1.strip(), s2.strip(),
-                add_special_tokens=True, 
-                padding=True,
-                truncation='longest_first', 
-                max_length=self.max_length,
-            )
+            _input = target_str.split('<sep>')
         else:
-            return self.tokenizer(
-                target_str,
-                add_special_tokens=True, 
-                padding=True,
-                truncation='longest_first', 
-                max_length=self.max_length,
-            )
+            _input = [target_str]
+        assert len(_input) <= 2
+        _input = [p.strip() for p in _input]
+        
+        return self.tokenizer(
+            *_input,
+            add_special_tokens=True, 
+            padding=True,
+            truncation='longest_first', 
+            max_length=self.max_length,
+        )
     
     def __getitem__(self, index):
         assert 0 <= index < self.n
@@ -121,12 +103,12 @@ class CustomDataset(Dataset):
         
         if self.y_strs is not None and self.y_nums is not None:
             model_inputs['labels'] = {
-                'str': self.token_encode(self.y_strs[index]).input_ids,
+                'str': self.y_strs[index],
                 'num': self.y_nums[index],
             }
     
         elif self.y_strs is not None:
-            model_inputs['labels'] = self.token_encode(self.y_strs[index]).input_ids
+            model_inputs['labels'] = self.y_strs[index]
     
         elif self.y_nums is not None:
             model_inputs['labels'] = self.y_nums[index]
@@ -140,18 +122,9 @@ class CustomDataset(Dataset):
         return self.n
 
 
-class CustomData:
-    test_x_ignore=(
-        # 'reason', 
-        # 'conn1', 'conn2', 'conn1id', 'conn2id', 
-        # 'conn1sense1', 'conn1sense2', 'conn2sense1', 'conn2sense2',
-        # 'conn1sense1id', 'conn1sense2id', 'conn2sense1id', 'conn2sense2id',
-    )
-    train_input_y_nums:bool
-    train_input_y_strs:bool
-    
+class IDRRDataConfig(CustomDataConfig):
     def __init__(
-        self, 
+        self,
         data_path,
         data_name='pdtb2',
         data_level='top',
@@ -163,19 +136,15 @@ class CustomData:
         max_length=1024,
         secondary_label_weight=0.5,
         mini_dataset=False,
-        subtext_threshold=0,
     ):
-        self.dataframes = IDRRDataFrames(
-            data_name=data_name,
-            data_level=data_level,
-            data_relation=data_relation,
-            data_path=data_path,
-        )
+        super().__init__()
         
-        # self.base_model_path = base_model_path
-        self.tokenizer = AutoTokenizer.from_pretrained(base_model_path)
-        # self.data_collator = DataCollatorForSeq2Seq(tokenizer=self.tokenizer)
-        # self.data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
+        self.data_path = data_path
+        self.data_name = data_name
+        self.data_level = data_level
+        self.data_relation = data_relation
+        
+        self.base_model_path = base_model_path
         self.prompt = prompt
         if 'x' in prompt:
             self.prompt['train_x'] = prompt['x']
@@ -183,14 +152,44 @@ class CustomData:
         if 'y' in prompt:
             self.prompt['train_y'] = prompt['y']
             self.prompt['eval_y'] = prompt['y']
-        assert 'train_x' in self.prompt and 'eval_x' in self.prompt
-        assert all(ignore_key not in self.prompt['eval_x']
-                   for ignore_key in self.test_x_ignore)
- 
+        
         self.max_length = max_length
         self.secondary_label_weight = secondary_label_weight
         self.mini_dataset = mini_dataset
-        self.subtext_threshold = subtext_threshold
+
+
+class IDRRData(CustomData):
+    test_x_ignore=(
+        # 'reason', 
+        # 'conn1', 'conn2', 'conn1id', 'conn2id', 
+        # 'conn1sense1', 'conn1sense2', 'conn2sense1', 'conn2sense2',
+        # 'conn1sense1id', 'conn1sense2id', 'conn2sense1id', 'conn2sense2id',
+    )
+    train_input_y_nums:bool
+    train_input_y_strs:bool
+    
+    def __init__(
+        self, 
+        data_config:IDRRDataConfig,
+    ):
+        self.data_config = data_config
+        _config = data_config
+        self.dataframes = IDRRDataFrames(
+            data_name=_config.data_name,
+            data_level=_config.data_level,
+            data_relation=_config.data_relation,
+            data_path=_config.data_path,
+        )
+        
+        # self.base_model_path = base_model_path
+        self.tokenizer = AutoTokenizer.from_pretrained(_config.base_model_path)
+        # self.data_collator = DataCollatorForSeq2Seq(tokenizer=self.tokenizer)
+        # self.data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
+        self.prompt = _config.prompt
+
+        assert 'train_x' in self.prompt and 'eval_x' in self.prompt
+        assert all(ignore_key not in self.prompt['eval_x']
+                   for ignore_key in self.test_x_ignore)
 
         self.label_list = self.dataframes.label_list
         self.num_labels = len(self.label_list)
@@ -198,8 +197,6 @@ class CustomData:
 
         self.data_collator:CustomDataCollator = self.get_data_collator()
         self.compute_metrics:CustomComputeMetrics = self.get_compute_metrics()
-        
-        self.shift_num = 0
     
     def get_data_collator(self):
         raise Exception()
